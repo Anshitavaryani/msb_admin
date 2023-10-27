@@ -1,24 +1,18 @@
 import React, { useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import {
-  AiOutlineDashboard,
-  AiOutlineShoppingCart,
-  AiOutlineUser,
-  AiOutlineBgColors,
-} from "react-icons/ai";
-import { RiCouponLine } from "react-icons/ri";
+import { AiOutlineDashboard, AiOutlineUser } from "react-icons/ai";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { FaUsers,FaRegSun } from "react-icons/fa";
 import { ImBlog } from "react-icons/im";
-import { IoIosNotifications } from "react-icons/io";
-import { FaClipboardList, FaBloggerB } from "react-icons/fa";
-import { SiBrandfolder } from "react-icons/si";
+import { FaBloggerB } from "react-icons/fa";
 import { BiCategoryAlt } from "react-icons/bi";
+
 import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
-import "./MainLayout.scss"
+import "./MainLayout.scss";
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = () => {
@@ -29,11 +23,16 @@ const MainLayout = () => {
   const navigate = useNavigate();
   return (
     <Layout /* onContextMenu={(e) => e.preventDefault()} */>
-      <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        className="sidebar"
+      >
         <div className="logo">
           <h2 className="text-white fs-5 text-center py-3 mb-0">
             <span className="sm-logo">DC</span>
-            <span className="lg-logo">Dev Corner</span>
+            <span className="lg-logo">MY STORY BOOK</span>
           </h2>
         </div>
         <Menu
@@ -41,7 +40,7 @@ const MainLayout = () => {
           mode="inline"
           defaultSelectedKeys={[""]}
           onClick={({ key }) => {
-            if (key == "signout") {
+            if (key === "signout") {
             } else {
               navigate(key);
             }
@@ -54,75 +53,23 @@ const MainLayout = () => {
             },
             {
               key: "customers",
-              icon: <AiOutlineUser className="fs-4" />,
+              icon: <FaUsers className="fs-4" />,
               label: "Customers",
             },
             {
-              key: "Catalog",
-              icon: <AiOutlineShoppingCart className="fs-4" />,
-              label: "Catalog",
+              key: "Category",
+              icon: <BiCategoryAlt className="fs-4" />,
+              label: "Category",
               children: [
-                {
-                  key: "product",
-                  icon: <AiOutlineShoppingCart className="fs-4" />,
-                  label: "Add Product",
-                },
-                {
-                  key: "list-product",
-                  icon: <AiOutlineShoppingCart className="fs-4" />,
-                  label: "Product List",
-                },
-                {
-                  key: "brand",
-                  icon: <SiBrandfolder className="fs-4" />,
-                  label: "Brand",
-                },
-                {
-                  key: "list-brand",
-                  icon: <SiBrandfolder className="fs-4" />,
-                  label: "Brand List ",
-                },
-                {
-                  key: "category",
-                  icon: <BiCategoryAlt className="fs-4" />,
-                  label: "Category",
-                },
+                // {
+                //   key: "category",
+                //   icon: <BiCategoryAlt className="fs-4" />,
+                //   label: "Category",
+                // },
                 {
                   key: "list-category",
                   icon: <BiCategoryAlt className="fs-4" />,
                   label: "Category List",
-                },
-                {
-                  key: "color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color",
-                },
-                {
-                  key: "list-color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color List",
-                },
-              ],
-            },
-            {
-              key: "orders",
-              icon: <FaClipboardList className="fs-4" />,
-              label: "Orders",
-            },
-            {
-              key: "marketing",
-              icon: <RiCouponLine className="fs-4" />,
-              label: "Marketing",
-              children: [
-                {
-                  key: "coupon",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Coupon",
-                },
-                {
-                  key: "coupon-list",
-                  icon: <RiCouponLine className="fs-4" />,
-                  label: "Coupon List",
                 },
               ],
             },
@@ -141,22 +88,20 @@ const MainLayout = () => {
                   icon: <FaBloggerB className="fs-4" />,
                   label: "Blog List",
                 },
-                {
-                  key: "blog-category",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Blog Category",
-                },
-                {
-                  key: "blog-category-list",
-                  icon: <FaBloggerB className="fs-4" />,
-                  label: "Blog Category List",
-                },
               ],
             },
             {
-              key: "enquiries",
-              icon: <FaClipboardList className="fs-4" />,
-              label: "Enquiries",
+              key: "roles",
+              icon: <FaRegSun className="fs-4" />,
+              label: "Role",
+              children: [
+                
+                {
+                  key: "role-list",
+                  icon: <FaRegSun className="fs-4" />,
+                  label: "Role List",
+                },
+              ],
             },
           ]}
         />
@@ -177,12 +122,12 @@ const MainLayout = () => {
             }
           )}
           <div className="d-flex gap-4 align-items-center">
-            <div className="position-relative">
+            {/* <div className="position-relative">
               <IoIosNotifications className="fs-4" />
               <span className="badge bg-warning rounded-circle p-1 position-absolute">
                 3
               </span>
-            </div>
+            </div> */}
 
             <div className="d-flex gap-3 align-items-center dropdown">
               <div>
@@ -207,9 +152,27 @@ const MainLayout = () => {
                   <Link
                     className="dropdown-item py-1 mb-1"
                     style={{ height: "auto", lineHeight: "20px" }}
-                    to="/"
+                    to="/adminProfile"
                   >
                     View Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item py-1 mb-1"
+                    style={{ height: "auto", lineHeight: "20px" }}
+                    to="/adminUser"
+                  >
+                    Add Another Admin Account
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item py-1 mb-1"
+                    style={{ height: "auto", lineHeight: "20px" }}
+                    to="/reset-password"
+                  >
+                    Change Password
                   </Link>
                 </li>
                 <li>

@@ -6,24 +6,23 @@ import { Box } from "@mui/material";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
-export default function Categorylist() {
+export default function RoleList() {
   let emptyProduct = {
     id: null,
-    title: "",
-    description: "",
-  };
-  const [categories, setCategories] = useState([]);
+    name: '',
+    abb: '',
+
+};
+  const [roles, setRoles] = useState([]);
   const [roleDialog, setRoleDialog] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [deleteRoleDialog, setDeleteRoleDialog] = useState(false);
   const [role, setRole] = useState(emptyProduct);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const products = [
     {
       id: 1,
-      title: "Apple Watch",
-      slug:"aw",
-      description: "₦350,000",
+      name: "Apple Watch",
+      abb: "₦350,000",
     },
   ];
 
@@ -32,17 +31,17 @@ export default function Categorylist() {
     setRole(emptyProduct);
     setSubmitted(false);
     setRoleDialog(true);
-  };
+};
 
   //edit dialog
   const editProduct = (product) => {
-    setCategories({ ...product });
+    setRoles({ ...product });
     setRoleDialog(true);
   };
 
   //delete dialog
   const confirmDeleteRole = (product) => {
-    setCategories(product);
+    setRoles(product);
     setDeleteRoleDialog(true);
   };
 
@@ -77,6 +76,7 @@ export default function Categorylist() {
     </React.Fragment>
   );
 
+
   //action buttons
   const actionBodyTemplate = (rowData) => {
     return (
@@ -108,38 +108,22 @@ export default function Categorylist() {
         alignItems="center"
         marginBottom="30px"
       >
-        <h3>Category List</h3>
+        <h3>Role List</h3>
         <Box>
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            type="search"
-            onInput={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search..."
-          />
-        </span>
           <Button
-            label="Add New Category"
+            label="Add New Role"
             icon="pi pi-plus"
             severity="success"
-            style={{ margin: "0px 10px" ,borderRadius:"8px"}}
+            style={{ margin: "0px 10px" }}
             onClick={openNew}
           />
         </Box>
-        
       </Box>
       <Box className="card">
-        <DataTable
-          value={products}
-          paginator
-          rows={5}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          tableStyle={{ minWidth: "50rem" }}
-        >
+        <DataTable value={products} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: "50rem" }}>
           <Column field="id" header="Id" sortable></Column>
-          <Column field="title" header="Name" sortable></Column>
-          <Column field="slug" header="Slug" sortable></Column>
-          <Column field="description" header="Description"></Column>
+          <Column field="name" header="Name" sortable></Column>
+          <Column field="abb" header="Abbreviation" sortable></Column>
           <Column
             body={actionBodyTemplate}
             header="Action"
@@ -153,7 +137,7 @@ export default function Categorylist() {
         visible={roleDialog}
         style={{ width: "32rem" }}
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-        header="Category Details"
+        header="Product Details"
         modal
         className="p-fluid"
         onHide={hideDialog}
@@ -166,8 +150,8 @@ export default function Categorylist() {
           <InputText id="name" required autoFocus />
         </div>
         <div className="field">
-          <label htmlFor="description" className="font-bold">
-            Description
+          <label htmlFor="abb" className="font-bold">
+            Abbreviation
           </label>
           <InputText id="abb" required autoFocus />
         </div>
@@ -188,7 +172,7 @@ export default function Categorylist() {
             style={{ fontSize: "2rem" }}
           />
 
-          <span>Are you sure you want to delete this category ?</span>
+          <span>Are you sure you want to delete ?</span>
         </div>
       </Dialog>
     </Box>
