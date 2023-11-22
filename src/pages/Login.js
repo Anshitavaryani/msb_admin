@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { AdminLogin } from "../services/Api/Api";
 import "./Login.scss";
+import { Button } from "primereact/button";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -25,10 +26,7 @@ const Login = () => {
       let result = await AdminLogin(formData);
 
       if (result.status === 200) {
-        localStorage.setItem(
-          "adminToken",
-          result?.data?.data?.token
-        );
+        localStorage.setItem("adminToken", result?.data?.data?.token);
         toast.success(" Logged In !", {
           position: "top-right",
           autoClose: 500,
@@ -55,13 +53,16 @@ const Login = () => {
         theme: "light",
       });
     }
-  };
+  }
 
   return (
     <div className="LoginContainer">
       <div className="Login">
         <div className="Login_Container">
-          <h1>Login</h1>
+          <h1 style={{ marginBottom: "30px", marginTop: "30px" }}>
+            ADMIN LOGIN
+          </h1>
+          {/* <h5 style={{}}>Please enter your login and password!</h5> */}
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -82,17 +83,24 @@ const Login = () => {
               placeholder="Password"
             />
           </Form.Group>
-          <div style={{ width: "20%", margin: "auto" }}>
+          <div style={{ marginLeft: "100px" }}>
             <Button
-              variant="secondary"
-              type="submit"
-              className="btntheme"
+              severity="secondary"
               onClick={(e) => {
                 onSubmit(e);
-                // handleClick({ vertical: "top", horizontal: "right" });
+              }}
+              style={{
+                borderRadius: "10px",
+                marginTop: "10px",
+                marginBottom:"10px",
+                height: "40px",
+                width: "80%",
+                // backgroundColor: "#8f001e",
+                paddingLeft: "140px",
+                border: "#8f001e",
               }}
             >
-              Submit
+              SIGN IN
             </Button>
           </div>
         </div>

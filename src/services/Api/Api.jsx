@@ -166,11 +166,60 @@ export const DeleteBlog = async (blog_id, adminToken) => {
 };
 
 export const ChangeAdminPassword = async (data) => {
-  const token = await localStorage.getItem("adminToken");
-  return axios.post(BASE_URL + "admin/changePassword", data, {
+  return axios.post(BASE_URL + "admin/change-password", data, {
     headers: {
       "Content-Type": "multipart/form-data",
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+export const GetAdmins = async () => {
+  const res = await axios.get(BASE_URL + "admin/getAllAdmin");
+  return res;
+};
+
+export const GetAdminById = async (id) => {
+  return await axios.get(BASE_URL + "admin/getAdminById?id=" + id);
+};
+
+export const UpdateAdmin = async (formData) => {
+  return await axios.put(BASE_URL + "admin/updateAdmin", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const DeleteAdmin = async (admin_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("admin_id", admin_id);
+  return axios.delete(BASE_URL + "admin/deleteAdmin", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
+};
+
+export const GetAdminProfile = async () => {
+  const token = await localStorage.getItem("adminToken");
+  console.log("token-=========>", token);
+  return await axios.get(BASE_URL + "admin/getAdminProfile", {
+    headers: {
       "x-access-token": `${token}`,
+      // "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const CreateAdmin = async (formData) => {
+  return await axios.post(BASE_URL + "admin/register", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
     },
   });
 };

@@ -8,7 +8,7 @@ import { GetAllCategory, CreateBlog } from "../../services/Api/Api";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 
 const Addblog = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Addblog = () => {
   }, []);
 
   const handleCategory = (e) => {
-    console.log("item==>",e.target.value)
+    console.log("item==>", e.target.value);
     e.preventDefault();
     let category = [...selectedCategoryList];
     category.push(e.target.value);
@@ -83,16 +83,21 @@ const Addblog = () => {
       formData.append("type", type);
       formData.append("images", images);
       formData.append(
-        "categories", selectedCategoryList.length > 0 ? selectedCategoryList.join(",") : ""
-  
+        "categories",
+        selectedCategoryList.length > 0 ? selectedCategoryList.join(",") : ""
+
         // idData?.category_name ? idData?.category_name : ""
       );
 
       const response = await CreateBlog(formData);
-      console.log("response===>",response)
+      console.log("response===>", response);
 
       if (response.status === 200) {
         toast.success("Blog added successfully");
+        setTimeout(() => {
+          // Refresh the page
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
       if (error.response.status === 401) {
@@ -135,7 +140,9 @@ const Addblog = () => {
                 type="file"
                 required
                 accept="images/*"
-                onChange={(e) => {setImage(e.target.files[0])}}
+                onChange={(e) => {
+                  setImage(e.target.files[0]);
+                }}
               />
             </Form.Group>
 
@@ -156,8 +163,7 @@ const Addblog = () => {
                 aria-label="Default select example"
                 className="new_form_control"
                 value={type}
-              onChange={(e) => setType(e.target.value)}
-
+                onChange={(e) => setType(e.target.value)}
               >
                 <option>Select Type:</option>
                 <option value="PAID">PAID</option>
@@ -180,13 +186,17 @@ const Addblog = () => {
               </Form.Select>
             </Form.Group>
             {selectedCategoryList.map((item, index) => {
-                return (
-                  <div onClick={(e) => { handleRemoveCategory(e, item); }} >
-                    <text style={{ fontSize: 16 }} >{item}</text>
-                    <CloseIcon fontSize="small" color="warning" />
-                  </div>
-                );
-              })}
+              return (
+                <div
+                  onClick={(e) => {
+                    handleRemoveCategory(e, item);
+                  }}
+                >
+                  <text style={{ fontSize: 16 }}>{item}</text>
+                  <CloseIcon fontSize="small" color="warning" />
+                </div>
+              );
+            })}
             <div>
               <Button
                 icon="pi pi-check"

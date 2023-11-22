@@ -1,18 +1,40 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Button } from "primereact/button";
 import Form from "react-bootstrap/Form";
-import { CreateRole } from "../../services/Api/Api";
+import { CreateAdmin, GetAllRoles } from "../../services/Api/Api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card } from "primereact/card";
 
-const AddRole = () => {
+const AddAdmin = () => {
   const [name, setName] = useState("");
-  const [abbreviation, setAbbreviation] = useState("");
+  const [email, setEmail] = useState("");
+  const [roleList, setRoleList] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("");
+
   const navigate = useNavigate();
+
+  const getRoleList = async () => {
+    let res = await GetAllRoles();
+
+    if (res?.status === 200) {
+      setRoleList(res?.data?.data);
+      console.log("roles", res?.data?.data);
+    } else {
+    }
+  };
+  useEffect(() => {
+    getRoleList();
+  }, []);
+
+  const handleCategory = (e) => {
+    e.preventDefault();
+    const role = e.target.value;
+    setSelectedRole(role);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,21 +43,26 @@ const AddRole = () => {
       toast.error("Please enter name");
       return;
     }
-    if (!abbreviation) {
-      toast.error("Please enter abbreviation");
+    if (!email) {
+      toast.error("Please enter email");
       return;
     }
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("abbreviation", abbreviation);
+      formData.append("email", email);
+      //   formData.append(
+      //     "role_id",
+      //     selectedRoleList.length > 0 ? selectedRoleList.join(",") : ""
+      //   );
+      formData.append("role_id", selectedRole);
 
-      const response = await CreateRole(formData);
+      const response = await CreateAdmin(formData);
 
       if (response.status === 200) {
-        toast.success("Role added successfully");
+        toast.success("Admin added successfully");
       }
-      navigate("/role-list");
+      navigate("/adminList");
     } catch (error) {
       if (error.response.status === 401) {
         toast.error("Token expired");
@@ -49,24 +76,24 @@ const AddRole = () => {
     }
   };
 
-  const navigateToRole = () => {
-    navigate("/role-list");
+  const navigateToAdmin = () => {
+    navigate("/adminList");
   };
 
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginBottom: "50px" }}>Create New Role</h3>
+        <h3 style={{ marginBottom: "50px" }}>Create New Admin</h3>
       </Box>
       <Card>
         <div>
-          <Form >
+          <Form>
             <Form.Group className="mb-3">
               <Form.Label> Name</Form.Label>
               <Form.Control
                 type="text"
                 required
-                placeholder="Enter role"
+                placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="new_form_control"
@@ -74,15 +101,35 @@ const AddRole = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Abbreviation</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
-                type="abbreviation"
-                placeholder="Enter abbreviation"
-                value={abbreviation}
+                type="email"
+                placeholder="Enter email"
+                value={email}
                 required
-                onChange={(e) => setAbbreviation(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="new_form_control"
               />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Select Role :</Form.Label>
+
+              <Form.Select
+                aria-label="Default select example"
+                value={selectedRole}
+                onChange={(e) => handleCategory(e)}
+                className="new_form_control"
+              >
+                <option>Select Role</option>
+                {roleList.map((item, index) => {
+                  return (
+                    <option key={index} value={item.id}>
+                      {item?.name}
+                    </option>
+                  );
+                })}
+              </Form.Select>
             </Form.Group>
 
             <div>
@@ -105,7 +152,7 @@ const AddRole = () => {
                 icon="pi pi-times"
                 severity="secondary"
                 onClick={(e) => {
-                  navigateToRole();
+                  navigateToAdmin();
                 }}
                 style={{ borderRadius: "10px", marginLeft: "10px" }}
               >
@@ -119,4 +166,4 @@ const AddRole = () => {
   );
 };
 
-export default AddRole;
+export default AddAdmin;

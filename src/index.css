@@ -14,11 +14,13 @@ body {
   color: #1890ff;
 }
 
+
+
 .logo {
   height: 32px;
   margin: 16px;
   background: rgba(255, 255, 255, 0.3);
-  background-color: #ffd333;
+  background-color: #8f001e !important;
   margin: 0;
   height: 64px;
   position: sticky;
@@ -52,7 +54,7 @@ body {
   display: none;
 }
 .logo {
-  background-color: #ffd333;
+  background-color: #8f001e !important;
   margin: 0;
   height: 64px;
 }

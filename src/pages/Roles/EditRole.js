@@ -69,7 +69,7 @@ const EditRole = () => {
         <h3 style={{ marginBottom: "60px" }}>Edit Role</h3>
       </Box>
       <Card>
-        <div className="form">
+        <div>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Role Name</Form.Label>
@@ -78,7 +78,7 @@ const EditRole = () => {
                 defaultValue={idData?.name}
                 name="name"
                 onChange={(e) => onChange(e)}
-                placeholder="Enter role"
+                
               />
             </Form.Group>
 

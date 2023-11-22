@@ -129,7 +129,8 @@ const Categorylist = () => {
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
-      valueGetter: (params) => params.row.Categories[0]?.title || "",
+      valueGetter: (params) =>
+        params.row.Categories.map((category) => category.title).join(", "),
     },
 
     {

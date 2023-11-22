@@ -59,6 +59,7 @@ const ViewBlog = () => {
                     src={`${BASE_URL_IMAGE}${blogData?.blog_attachment[0]?.file_name}`}
                     alt="Blog Icon"
                     className="category-icon-preview"
+                    style={{height:"100px",width:"100px"}}
                   />
                 ) : (
                   <span>No Image Available</span>

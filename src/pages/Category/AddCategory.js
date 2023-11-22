@@ -60,7 +60,7 @@ const AddCategory = () => {
       </Box>
       <Card>
         <div>
-          <Form className="form">
+          <Form >
             <Form.Group className="mb-3">
               <Form.Label> Title</Form.Label>
               <Form.Control

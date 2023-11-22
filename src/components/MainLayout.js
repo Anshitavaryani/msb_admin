@@ -134,6 +134,11 @@ const MainLayout = () => {
                 3
               </span>
             </div> */}
+                <div className="position-relative">
+                  <Link to="https://mystorybank.info/" unstable_viewTransition>
+                    Visit Website
+                  </Link>
+                </div>
 
                 <div className="d-flex gap-3 align-items-center dropdown">
                   <div
@@ -152,7 +157,7 @@ const MainLayout = () => {
                       <Link
                         className="dropdown-item py-1 mb-1"
                         style={{ height: "auto", lineHeight: "20px" }}
-                        to="/adminProfile"
+                        to="/viewAdmin"
                       >
                         View Profile
                       </Link>
@@ -161,7 +166,7 @@ const MainLayout = () => {
                       <Link
                         className="dropdown-item py-1 mb-1"
                         style={{ height: "auto", lineHeight: "20px" }}
-                        to="/adminUser"
+                        to="/adminList"
                       >
                         Add Another Admin Account
                       </Link>

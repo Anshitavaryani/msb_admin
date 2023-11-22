@@ -1,36 +1,31 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button } from "primereact/button";
-import { useNavigate } from "react-router-dom";
-import { GetUsers, DeleteUser } from "../../services/Api/Api";
-import { toast } from "react-toastify";
-import { InputText } from "primereact/inputtext";
-import "./Customers.css";
 
-const Customers = () => {
+import { useNavigate } from "react-router-dom";
+import { GetAdmins, DeleteAdmin } from "../../services/Api/Api";
+import { toast } from "react-toastify";
+import { Button } from "primereact/button";
+
+const AdminUser = () => {
+  const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(50);
   const [dataGridHeight, setDataGridHeight] = useState("550px");
-  const [userData, setUserData] = useState([]);
+  const [roleData, setRoleData] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
-  const [globalFilter, setGlobalFilter] = useState(null);
-  const [menteeDataBackup, setMenteeDataBackup] = useState([]);
-  const navigate = useNavigate();
 
   const handleClick = (event, value) => {
     setUserIdToNavigate(value);
     setAnchorEl(event.currentTarget);
   };
 
-  //get all user
+  //get all specialist
   const getData = async () => {
     try {
-      let result = await GetUsers(localStorage.getItem("adminToken"));
-      setUserData(result.data.data);
-      setMenteeDataBackup(result.data.data);
-      console.log("user", result.data.data);
+      let result = await GetAdmins(localStorage.getItem("adminToken"));
+      setRoleData(result.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -54,18 +49,20 @@ const Customers = () => {
     }
   }, [pageSize]);
 
-  const removeUser = async (e, user_id) => {
+  //delete role
+  const removeAdmin = async (e, admin_id) => {
     const confirmed = window.confirm(
-      "Do you really want to delete this mentee?"
+      "Do you really want to delete this admin?"
     );
     if (!confirmed) return;
 
     try {
-      const result = await DeleteUser(
-        user_id,
+      const result = await DeleteAdmin(
+        admin_id,
         localStorage.getItem("adminToken")
       );
-      toast.success("User deleted successfully!", {
+
+      toast.success("Role deleted successfully!", {
         position: "top-right",
         autoClose: 500,
         hideProgressBar: false,
@@ -77,10 +74,10 @@ const Customers = () => {
       });
       window.location.reload(true);
       setTimeout(() => {
-        navigate("/customers");
+        navigate("/adminList");
       }, 3000);
     } catch (error) {
-      if (error.response.status == 401) {
+      if (error.response && error.response.status === 401) {
         toast.error("Token expired", {
           position: "top-right",
           autoClose: 500,
@@ -99,119 +96,65 @@ const Customers = () => {
     }
   };
 
-  const navigateToAddUser = () => {
-    navigate("/addCustomer");
+  const navigateToAddAdmin = () => {
+    navigate("/addAdmin");
   };
-
-  const onSearch = (e) => {
-    const backupData = [...menteeDataBackup];
-    const finalData = [];
-    for (let item in backupData) {
-      if (
-        // backupData[item].email_id?.includes(search) ||
-        backupData[item].name?.toLowerCase()?.includes(e?.toLowerCase()) ||
-        backupData[item].id
-          .toString()
-          ?.toLowerCase()
-          ?.includes(e?.toLowerCase())
-      ) {
-        finalData.push(backupData[item]);
-      }
-      console.log("items=====>", backupData[item]);
-    }
-    setUserData(finalData);
-    console.log("finalData=====>", finalData);
+  const navigateToEditAdmin = (event, id) => {
+    navigate(`/editAdmin/${id}`);
   };
-  const data = [
-    // Your table data here
-    { is_subscribed: true, /* other fields */ },
-    { is_subscribed: false, /* other fields */ },
-    // ...
-  ];
-
 
   const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 100,
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-    },
+    { field: "id", headerName: "ID", width: 150 },
     {
       field: "name",
       headerName: "Name",
-      width: 150,
-      flex: 1,
+      width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-    },
-    {
-      field: "image",
-      headerName: "Image",
-      width: 150,
       flex: 1,
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      sortable: false,
-      renderCell: (cellValues) => {
-        const attachments = cellValues.row.attachements;
-        if (attachments && attachments.length > 0) {
-          const attachment = attachments[0];
-          const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
-          return (
-            <div>
-              <img
-                src={imageUrl}
-                alt="User profile"
-                className="category-icon-preview_in_list"
-                style={{ width: "100px", height: "60px" }}
-              />
-            </div>
-          );
-        } else {
-          // Handle the case where there are no attachments for the user
-          return <div>No Image Available</div>;
-        }
-      },
     },
     {
-      field: "email",
+      field: "email_id",
       headerName: "Email",
-      width: 450,
+      width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
     },
     {
-      field: "is_subscribed",
-      headerName: "Is Subscribed?",
-      width: 250,
+      field: "role",
+      headerName: "Role",
+      width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
-      renderCell: (params) => (
-        params.value ? "Yes" : "No"
-      ),
+      valueGetter: (params) => params.row.admin_roles?.name || "",
     },
+
     {
       field: "action",
       headerName: "Actions",
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      width: "250",
+      width: "350",
       flex: 1,
-      sortable: false,
-
       renderCell: (cellValues) => {
         return (
           <div>
+            <Button
+              icon="pi pi-pencil"
+              rounded
+              outlined
+              className="mr-2"
+              style={{ margin: "0px 10px" }}
+              onClick={(event) => navigateToEditAdmin(event, cellValues.id)}
+            />
             <Button
               icon="pi pi-trash"
               rounded
               outlined
               severity="danger"
-              onClick={(e) => removeUser(e, cellValues.id)}
+              onClick={(e) => removeAdmin(e, cellValues.id)}
             />
           </div>
         );
@@ -222,25 +165,13 @@ const Customers = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        {/* <Header title="USER MANAGEMENT" subtitle="Create Category" /> */}
-        <h3> Manage Customers</h3>
+        <h3>Admin List</h3>
         <Box>
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              type="search"
-              // onInput={(e) => setGlobalFilter(e.target.value)}
-              onChange={(e) => {
-                onSearch(e.target.value);
-              }}
-              placeholder="Search..."
-            />
-          </span>
           <Button
-            label=" Add New User"
+            label=" Add New Admin"
             icon="pi pi-plus"
             severity="success"
-            onClick={navigateToAddUser}
+            onClick={navigateToAddAdmin}
             style={{ margin: "0px 10px" }}
           />
         </Box>
@@ -254,7 +185,7 @@ const Customers = () => {
         }}
       >
         <DataGrid
-          rows={userData}
+          rows={roleData}
           columns={columns}
           pageSize={pageSize}
           rowHeight={80}
@@ -263,10 +194,11 @@ const Customers = () => {
           experimentalFeatures={{ newEditingApi: true }}
           onSelectionModelChange={(id) => {
             const selectedIDs = new Set([id]);
-            const selectedRowData = userData.filter((row) =>
+            const selectedRowData = roleData.filter((row) =>
               selectedIDs.has(row.id.toString())
             );
             setUserId(selectedIDs);
+            console.log("selectedRowData", selectedRowData);
           }}
         />
       </div>
@@ -274,4 +206,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default AdminUser;
