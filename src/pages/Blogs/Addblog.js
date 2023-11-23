@@ -144,7 +144,7 @@ const Addblog = () => {
                   setImage(e.target.files[0]);
                 }}
               />
-            </Form.Group>
+            </Form.Group> 
 
             <Form.Group className="mb-3">
               <Form.Label> Blog Description</Form.Label>

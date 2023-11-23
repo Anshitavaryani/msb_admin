@@ -14,6 +14,7 @@ import AddRole from "./pages/Roles/AddRole";
 import EditRole from "./pages/Roles/EditRole";
 import Customers from "./pages/Customer/Customers";
 import AddCustomer from "./pages/Customer/AddCustomer";
+import ViewCustomer from "./pages/Customer/ViewCustomer";
 import Addblog from "./pages/Blogs/Addblog";
 import Bloglist from "./pages/Blogs/Bloglist";
 import ViewBlog from "./pages/Blogs/ViewBlog";
@@ -22,6 +23,7 @@ import AdminUser from "./pages/AdminManagement/AdminUser";
 import ViewAdmin from "./pages/AdminManagement/ViewAdmin";
 import AddAdmin from "./pages/AdminManagement/AddAdmin";
 import EditAdmin from "./pages/AdminManagement/EditAdmin";
+
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
           <Route path="/viewBlog/:id" element={<ViewBlog />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/addCustomer" element={<AddCustomer />} />
+          <Route path="/viewCustomer/:id" element={<ViewCustomer />} />
           <Route path="/category" element={<Categorylist />} />
           <Route path="/addCategory" element={<AddCategory />} />
           <Route path="/editCategory/:id" element={<EditCategory />} />

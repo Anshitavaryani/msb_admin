@@ -4,25 +4,25 @@ import { Box } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import { Row } from "react-bootstrap";
-import { GetBlogById } from "../../services/Api/Api";
+import { GetUserById } from "../../services/Api/Api";
 import { BASE_URL_IMAGE } from "../../services/Host";
 import { Card } from "primereact/card";
 
-const ViewBlog = () => {
+const ViewCustomer = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [blogData, setBlogData] = useState([]);
+  const [userData, setUserData] = useState([]);
   const [image, setImage] = useState({ preview: "", raw: "" });
 
-  const navigateToBlog = () => {
-    navigate("/blogs");
+  const navigateToUser = () => {
+    navigate("/customers");
   };
 
   //get role By ID
   useLayoutEffect(() => {
-    GetBlogById(id)
+    GetUserById(id)
       .then((res) => {
-        setBlogData(res.data.data);
+        setUserData(res.data.data);
         console.log("rolebyid", res.data.data);
         // console.log("imagessss", blogData?.blogs[0]?.file_name);
       })
@@ -33,7 +33,9 @@ const ViewBlog = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>View Blog Details</h3>
+        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>
+          View Customer Details
+        </h3>
       </Box>
 
       <Card>
@@ -41,25 +43,15 @@ const ViewBlog = () => {
           <Form className="admin_details_form">
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog's Heading</Form.Label>
-                <Form.Control
-                  name="name"
-                  defaultValue={blogData?.heading}
-                  type="text"
-                  disabled
-                />
-              </Form.Group>
-            </Row>
-            <Row>
-              <Form.Group className="mb-3">
-                <Form.Label>Image:</Form.Label>
+                <Form.Label>User's Profile Picture:</Form.Label>
                 <br />
-                {blogData?.blog_attachment && blogData?.blog_attachment[0]?.file_name ? (
+                {userData?.attachements &&
+                userData?.attachements[0]?.file_name ? (
                   <img
-                    src={`${BASE_URL_IMAGE}${blogData?.blog_attachment[0]?.file_name}`}
+                    src={`${BASE_URL_IMAGE}${userData?.attachements[0]?.file_name}`}
                     alt="Blog Icon"
                     className="category-icon-preview"
-                    style={{height:"100px",width:"100px"}}
+                    style={{ height: "100px", width: "100px" }}
                   />
                 ) : (
                   <span>No Image Available</span>
@@ -69,37 +61,35 @@ const ViewBlog = () => {
 
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog'sDescription</Form.Label>
+                <Form.Label>Customer's Name</Form.Label>
                 <Form.Control
                   name="name"
-                  defaultValue={blogData?.description}
-                  as="textarea"
-                  disabled
-                  rows={6}
-                />
-              </Form.Group>
-            </Row>
-            <Row>
-              <Form.Group className="mb-3">
-                <Form.Label>Type</Form.Label>
-                <Form.Control
-                  name="type"
+                  defaultValue={userData?.name}
                   type="text"
-                  defaultValue={blogData?.type}
                   disabled
                 />
               </Form.Group>
             </Row>
+
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Categories</Form.Label>
+                <Form.Label>Email Address</Form.Label>
                 <Form.Control
-                  name="type"
+                  name="email"
+                  defaultValue={userData?.email}
                   type="text"
-                  // defaultValue={blogData?.Categories?.title}
-                  defaultValue={blogData?.Categories?.map(
-                    (category) => category.title
-                  ).join(", ")}
+                  disabled
+                />
+              </Form.Group>
+            </Row>
+
+            <Row>
+              <Form.Group className="mb-3">
+                <Form.Label>Mobile</Form.Label>
+                <Form.Control
+                  name="mobile"
+                  defaultValue={userData?.mobile}
+                  type="text"
                   disabled
                 />
               </Form.Group>
@@ -110,11 +100,11 @@ const ViewBlog = () => {
                 // icon="pi pi-times"
                 severity="secondary"
                 onClick={(e) => {
-                  navigateToBlog();
+                  navigateToUser();
                 }}
                 style={{ borderRadius: "10px", marginLeft: "10px" }}
               >
-                Return to Blog List
+                Return to User List
               </Button>
             </div>
           </Form>
@@ -124,4 +114,4 @@ const ViewBlog = () => {
   );
 };
 
-export default ViewBlog;
+export default ViewCustomer;

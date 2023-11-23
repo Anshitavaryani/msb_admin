@@ -7,6 +7,9 @@ import { GetUsers, DeleteUser } from "../../services/Api/Api";
 import { toast } from "react-toastify";
 import { InputText } from "primereact/inputtext";
 import "./Customers.css";
+import axios from "axios";
+import { BASE_URL } from "../../services/Host";
+import {  Select } from "@mui/material";
 
 const Customers = () => {
   const [pageSize, setPageSize] = useState(50);
@@ -103,6 +106,11 @@ const Customers = () => {
     navigate("/addCustomer");
   };
 
+
+  const navigateToViewUser = (event, id) => {
+    navigate(`/viewCustomer/${id}`);
+  };
+
   const onSearch = (e) => {
     const backupData = [...menteeDataBackup];
     const finalData = [];
@@ -122,13 +130,37 @@ const Customers = () => {
     setUserData(finalData);
     console.log("finalData=====>", finalData);
   };
+
   const data = [
     // Your table data here
-    { is_subscribed: true, /* other fields */ },
-    { is_subscribed: false, /* other fields */ },
+    { is_subscribed: true /* other fields */ },
+    { is_subscribed: false /* other fields */ },
     // ...
   ];
 
+  const updateStatus = async (user_id, payment_status) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}admin/updatepaymentStatus`, // Update with your API endpoint
+        {
+          user_id: user_id,
+          payment_status: payment_status,
+        },
+        {
+          headers: {
+            "x-access-token": `${localStorage.getItem("adminToken")}`,
+          },
+        }
+      );
+      // Handle success
+      console.log(response.data);
+      console.log("User status updated successfully");
+      window.location.reload(true);
+    } catch (error) {
+      // Handle error
+      console.error("Error updating status:", error);
+    }
+  };
 
   const columns = [
     {
@@ -146,35 +178,35 @@ const Customers = () => {
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
     },
-    {
-      field: "image",
-      headerName: "Image",
-      width: 150,
-      flex: 1,
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      sortable: false,
-      renderCell: (cellValues) => {
-        const attachments = cellValues.row.attachements;
-        if (attachments && attachments.length > 0) {
-          const attachment = attachments[0];
-          const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
-          return (
-            <div>
-              <img
-                src={imageUrl}
-                alt="User profile"
-                className="category-icon-preview_in_list"
-                style={{ width: "100px", height: "60px" }}
-              />
-            </div>
-          );
-        } else {
-          // Handle the case where there are no attachments for the user
-          return <div>No Image Available</div>;
-        }
-      },
-    },
+    // {
+    //   field: "image",
+    //   headerName: "Image",
+    //   width: 150,
+    //   flex: 1,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   sortable: false,
+    //   renderCell: (cellValues) => {
+    //     const attachments = cellValues.row.attachements;
+    //     if (attachments && attachments.length > 0) {
+    //       const attachment = attachments[0];
+    //       const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
+    //       return (
+    //         <div>
+    //           <img
+    //             src={imageUrl}
+    //             alt="User profile"
+    //             className="category-icon-preview_in_list"
+    //             style={{ width: "100px", height: "60px" }}
+    //           />
+    //         </div>
+    //       );
+    //     } else {
+    //       // Handle the case where there are no attachments for the user
+    //       return <div>No Image Available</div>;
+    //     }
+    //   },
+    // },
     {
       field: "email",
       headerName: "Email",
@@ -184,16 +216,43 @@ const Customers = () => {
       flex: 1,
     },
     {
-      field: "is_subscribed",
-      headerName: "Is Subscribed?",
-      width: 250,
+      field: "status",
+      headerName: "Status",
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
+      width: 150,
       flex: 1,
-      renderCell: (params) => (
-        params.value ? "Yes" : "No"
-      ),
+      renderCell: (cellValues) => {
+        const handleStatusChange = async (event) => {
+          const newStatus = event.target.value;
+          updateStatus(cellValues.row.id, newStatus);
+          console.log(cellValues);
+          console.log("statuss=====>", newStatus); // Use newStatus instead of cellValues.status
+        };
+
+        return (
+          <Select
+            native
+            value={cellValues.row.payment_status}
+            onChange={handleStatusChange}
+          >
+            <option value="PENDING">PENDING</option>
+            <option value="CONFIRMED">CONFIRMED</option>
+          </Select>
+        );
+      },
     },
+    // {
+    //   field: "is_subscribed",
+    //   headerName: "Is Subscribed?",
+    //   width: 250,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   flex: 1,
+    //   renderCell: (params) => (
+    //     params.value ? "Yes" : "No"
+    //   ),
+    // },
     {
       field: "action",
       headerName: "Actions",
@@ -207,10 +266,19 @@ const Customers = () => {
         return (
           <div>
             <Button
+              icon="pi pi-file"
+              rounded
+              outlined
+              className="mr-2"
+              style={{ margin: "0px " }}
+              onClick={(event) => navigateToViewUser(event, cellValues.id)}
+            />
+            <Button
               icon="pi pi-trash"
               rounded
               outlined
               severity="danger"
+              style={{ margin: "0px 10px" }}
               onClick={(e) => removeUser(e, cellValues.id)}
             />
           </div>

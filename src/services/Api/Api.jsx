@@ -19,6 +19,10 @@ export const GetUsers = async () => {
   return res;
 };
 
+export const GetUserById = async (id) => {
+  return await axios.get(BASE_URL + "admin/getUserById?id=" + id);
+};
+
 //admin add user
 export const AddUser = async ({ email, name }) => {
   const formData = new FormData();
@@ -222,4 +226,12 @@ export const CreateAdmin = async (formData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+export const ChangePaymentStatus = async ({ user_id, payment_status }) => {
+  const formData = new FormData();
+  formData.append("user_id", user_id);
+  formData.append("payment_status", payment_status);
+
+  return await axios.post(BASE_URL + "admin/updatepaymentStatus", formData);
 };
