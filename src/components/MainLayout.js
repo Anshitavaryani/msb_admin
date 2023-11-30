@@ -88,19 +88,19 @@ const MainLayout = () => {
                   label: "Category ",
                 },
                 {
-                  key: "blogs",
+                  key: "stories",
                   icon: <FaBloggerB className="fs-4" />,
-                  label: "Blogs",
+                  label: "Stories",
                   children: [
                     {
-                      key: "addBlog",
+                      key: "addStory",
                       icon: <ImBlog className="fs-4" />,
-                      label: "Add Blog",
+                      label: "Add Story",
                     },
                     {
-                      key: "blogs",
+                      key: "stories",
                       icon: <FaBloggerB className="fs-4" />,
-                      label: "Blog List",
+                      label: "Stories List",
                     },
                   ],
                 },

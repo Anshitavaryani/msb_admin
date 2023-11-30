@@ -16,8 +16,26 @@ const Addblog = () => {
   const [description, setDescription] = useState("");
   const [type, setType] = useState("unpaid");
   const [categoryList, setCategoryList] = useState([]);
-  const [images, setImage] = useState(null);
+  const [images, setImages] = useState(null);
   const [selectedCategoryList, setSelectedCategoryList] = useState([]);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        // Set the image preview
+        setImagePreview(reader.result);
+        setImages(e.target.files[0]);
+      };
+
+      // Read the image as a data URL
+      reader.readAsDataURL(file);
+    }
+  };
 
   //get category name
   const getCategoryList = async () => {
@@ -35,11 +53,29 @@ const Addblog = () => {
     getCategoryList();
   }, []);
 
+  // const handleCategory = (e) => {
+  //   console.log("item==>", e.target.value);
+  //   e.preventDefault();
+  //   let category = [...selectedCategoryList];
+  //   category.push(e.target.value);
+  //   setSelectedCategoryList(category);
+  // };
   const handleCategory = (e) => {
     console.log("item==>", e.target.value);
+    let categoryTitle = "";
+    for (let i in categoryList) {
+      if (categoryList[i].id == e.target.value) {
+        categoryTitle = categoryList[i].title;
+      }
+    }
     e.preventDefault();
     let category = [...selectedCategoryList];
-    category.push(e.target.value);
+    const temp = {
+      id: e.target.value,
+      title: categoryTitle,
+    };
+    category.push(temp);
+
     setSelectedCategoryList(category);
     console.log("categoryyyyy===>", category);
   };
@@ -50,6 +86,18 @@ const Addblog = () => {
     category = category.filter((e) => e !== item);
     setSelectedCategoryList(category);
     console.log("categoryyyyy===>", category);
+  };
+
+  const handleRemoveImage = (e) => {
+    e.preventDefault();
+    setImages(null);
+    setImagePreview(null);
+
+    // Clear the file input value
+    const fileInput = document.getElementById("imageInput");
+    if (fileInput) {
+      fileInput.value = null;
+    }
   };
 
   const handleEditorChange = (event, editor) => {
@@ -72,28 +120,29 @@ const Addblog = () => {
       toast.error("Please enter type");
       return;
     }
-    // if (!image) {
-    //   toast.error("Please insert image");
-    //   return;
-    // }
     try {
       const formData = new FormData();
       formData.append("heading", heading);
       formData.append("description", description);
       formData.append("type", type);
       formData.append("images", images);
-      formData.append(
-        "categories",
-        selectedCategoryList.length > 0 ? selectedCategoryList.join(",") : ""
-
-        // idData?.category_name ? idData?.category_name : ""
-      );
+      // formData.append(
+      //   "categories",
+      //   selectedCategoryList.length > 0 ? selectedCategoryList.join(",") : ""
+      // );
+      if (selectedCategoryList.length > 0) {
+        const catIdList = [];
+        for (let i in selectedCategoryList) {
+          catIdList.push(selectedCategoryList[i].id);
+        }
+        formData.append("categories", catIdList.join(","));
+      }
 
       const response = await CreateBlog(formData);
       console.log("response===>", response);
 
       if (response.status === 200) {
-        toast.success("Blog added successfully");
+        toast.success("Story added successfully");
         setTimeout(() => {
           // Refresh the page
           window.location.reload();
@@ -113,12 +162,12 @@ const Addblog = () => {
   };
 
   const navigateToBlogs = () => {
-    navigate("/blogs");
+    navigate("/stories");
   };
 
   return (
     <div>
-      <h3 style={{ marginBottom: "30px" }}>Create a New Blog</h3>
+      <h3 style={{ marginBottom: "30px" }}>Create a New Story</h3>
 
       <Card>
         <div>
@@ -140,11 +189,36 @@ const Addblog = () => {
                 type="file"
                 required
                 accept="images/*"
-                onChange={(e) => {
-                  setImage(e.target.files[0]);
-                }}
+                id="imageInput"
+                onChange={handleImageChange}
               />
-            </Form.Group> 
+            </Form.Group>
+            {imagePreview && (
+              <div
+                style={{ position: "relative" }}
+                onClick={(e) => {
+                  handleRemoveImage(e);
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    height: "100px",
+                    width: "100px",
+                    margin: "10px",
+                  }}
+                />
+                <CloseIcon
+                  fontSize="small"
+                  color="warning"
+                  style={{
+                    position: "absolute",
+                    left: "99px",
+                  }}
+                />
+              </div>
+            )}
 
             <Form.Group className="mb-3">
               <Form.Label> Blog Description</Form.Label>
@@ -181,18 +255,19 @@ const Addblog = () => {
               >
                 <option>Choose Category</option>
                 {categoryList.map((item, index) => {
-                  return <option value={item.title}>{item?.title}</option>;
+                  return <option value={item.id}>{item?.title}</option>;
                 })}
               </Form.Select>
             </Form.Group>
             {selectedCategoryList.map((item, index) => {
+              console.log("slecetlist==>", selectedCategoryList);
               return (
                 <div
                   onClick={(e) => {
                     handleRemoveCategory(e, item);
                   }}
                 >
-                  <text style={{ fontSize: 16 }}>{item}</text>
+                  <text style={{ fontSize: 16 }}>{item.title}</text>
                   <CloseIcon fontSize="small" color="warning" />
                 </div>
               );

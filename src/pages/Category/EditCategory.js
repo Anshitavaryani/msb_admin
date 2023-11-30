@@ -1,21 +1,25 @@
 import { Box } from "@mui/material";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { GetCategoryById, UpdateCategory } from "../../services/Api/Api.jsx";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
+import { BASE_URL_IMAGE } from "../../services/Host";
 
 const EditCategory = () => {
   const { id } = useParams();
   const [idData, setIdData] = React.useState({});
+  const [checkImage, setCheckImage] = React.useState(null);
+  const [image, setImage] = useState({ preview: "", raw: "" });
 
   //get role By ID
   useLayoutEffect(() => {
     GetCategoryById(id)
       .then((res) => {
         setIdData(res.data.data);
+        setCheckImage(res.data.data.file_name);
         console.log("rolebyid", res.data.data);
       })
       .catch((err) => {
@@ -23,6 +27,16 @@ const EditCategory = () => {
       });
   }, [id]);
 
+  const handleImageChange = (e) => {
+    console.log("imageessss===>", e.target.value);
+    if (e.target.files.length) {
+      setImage({
+        preview: URL.createObjectURL(e.target.files[0]),
+        raw: e.target.files[0],
+      });
+    }
+    setIdData({ ...idData, image: e.target.files[0] });
+  };
   //update role api implementation
   const onChange = (e) => {
     setIdData({ ...idData, [e.target.name]: e.target.value });
@@ -33,10 +47,9 @@ const EditCategory = () => {
     const formData = new FormData();
     formData.append("category_id", id);
     formData.append("title", idData?.title ? idData?.title : "");
-    formData.append(
-      "description",
-      idData?.description ? idData?.description : ""
-    );
+    if (idData.image) {
+      formData.append("images", idData.image);
+    }
 
     UpdateCategory(formData)
       .then((res) => {
@@ -68,7 +81,7 @@ const EditCategory = () => {
         <h3 style={{ marginBottom: "60px" }}>Edit Category</h3>
       </Box>
       <Card>
-        <div >
+        <div>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Title</Form.Label>
@@ -80,16 +93,43 @@ const EditCategory = () => {
                 placeholder="Enter title"
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
+              <Form.Label>Image:</Form.Label>
+
               <Form.Control
-                type="text"
-                defaultValue={idData?.description}
-                name="description"
-                onChange={(e) => onChange(e)}
-                placeholder="Enter description"
+                type="file"
+                name="image"
+                onChange={(e) => handleImageChange(e)}
               />
+              {idData ? (
+                <>
+                  {image.preview === "" ? (
+                    <img
+                      src={`${BASE_URL_IMAGE}${idData.file_name}`}
+                      alt="Categroy Icon"
+                      style={{
+                        height: "100px",
+                        width: "100px",
+                        marginTop: "20px",
+                        marginLeft: "20px",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={image.preview}
+                      alt="Preview"
+                      style={{
+                        height: "100px",
+                        width: "100px",
+                        marginTop: "20px",
+                        marginLeft: "20px",
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <span>No Image Available</span>
+              )}
             </Form.Group>
           </Form>
           <div className="button">

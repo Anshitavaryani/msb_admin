@@ -24,11 +24,12 @@ export const GetUserById = async (id) => {
 };
 
 //admin add user
-export const AddUser = async ({ email, name }) => {
+export const AddUser = async ({ email, name,payment_status }) => {
   const formData = new FormData();
 
   formData.append("email", email);
   formData.append("name", name);
+  formData.append("payment_status", payment_status);
 
   return await axios.post(BASE_URL + "admin/createUser", formData, {
     headers: {

@@ -1,15 +1,24 @@
 .custom-header {
-    font-size: 16px; /* Set the desired font size for header names */
-  }
-  
-  .custom-cell {
-    font-size: 14px; /* Set the desired font size for cell content (emails) */
-  }
-  
-  .custom-image-cell img {
-    width: 50px; /* Set the desired width for images */
-    height: 50px; /* Set the desired height for images */
-  }
-  
+  font-size: 16px; /* Set the desired font size for header names */
+}
 
-  
+.custom-cell {
+  font-size: 14px; /* Set the desired font size for cell content (emails) */
+}
+
+.custom-image-cell img {
+  width: 50px; /* Set the desired width for images */
+  height: 50px; /* Set the desired height for images */
+}
+
+.tabledata {
+  height: 800px;
+  width: 100%;
+  align-items: center;
+  margin-left: 1.5%;
+  margin-top: 3.5%;
+  margin: initial;
+  font-size: 80px;
+  color: black;
+  text-align: center;
+}

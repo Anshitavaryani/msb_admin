@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-
+import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import {
   GetAllCategory,
@@ -19,6 +19,7 @@ const Categorylist = () => {
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
+  const [menteeDataBackup, setMenteeDataBackup] = useState([]);
 
   const handleClick = (event, value) => {
     setUserIdToNavigate(value);
@@ -30,6 +31,7 @@ const Categorylist = () => {
     try {
       let result = await GetAllCategory(localStorage.getItem("adminToken"));
       setRoleData(result.data.data);
+      setMenteeDataBackup(result.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -52,6 +54,27 @@ const Categorylist = () => {
       setDataGridHeight("550px");
     }
   }, [pageSize]);
+
+
+  const onSearch = (e) => {
+    const backupData = [...menteeDataBackup];
+    const finalData = [];
+    for (let item in backupData) {
+      if (
+        // backupData[item].email_id?.includes(search) ||
+        backupData[item].title?.toLowerCase()?.includes(e?.toLowerCase()) ||
+        backupData[item].id
+          .toString()
+          ?.toLowerCase()
+          ?.includes(e?.toLowerCase())
+      ) {
+        finalData.push(backupData[item]);
+      }
+      console.log("items=====>", backupData[item]);
+    }
+    setRoleData(finalData);
+    console.log("finalData=====>", finalData);
+  };
 
   //delete category
   const removeRole = async (e, category_id) => {
@@ -124,13 +147,43 @@ const Categorylist = () => {
       cellClassName: "custom-cell",
       flex: 1,
     },
+    // {
+    //   field: "description",
+    //   headerName: "Abbreviation",
+    //   width: 350,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   flex: 1,
+    // },
+
     {
-      field: "description",
-      headerName: "Abbreviation",
-      width: 350,
+      field: "image",
+      headerName: "Image",
+      width: 150,
+      flex: 1,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
+      sortable: false,
+      renderCell: (cellValues) => {
+        const attachment = cellValues.row; 
+        const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
+
+        if (imageUrl) {
+          return (
+            <div>
+              <img
+                src={imageUrl}
+                alt="Category Icon"
+                className="category-icon-preview_in_list"
+                style={{ width: "100px", height: "60px" }}
+              />
+            </div>
+          );
+        } else {
+          // Handle the case where there are no attachments for the user
+          return <div>No Image Available</div>;
+        }
+      },
     },
 
     {
@@ -169,6 +222,17 @@ const Categorylist = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h3>Category List</h3>
         <Box>
+        <span className="p-input-icon-left">
+            <i className="pi pi-search" />
+            <InputText
+              type="search"
+              // onInput={(e) => setGlobalFilter(e.target.value)}
+              onChange={(e) => {
+                onSearch(e.target.value);
+              }}
+              placeholder="Search..."
+            />
+          </span>
           <Button
             label=" Add New Category"
             icon="pi pi-plus"

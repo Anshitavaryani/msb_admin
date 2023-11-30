@@ -15,7 +15,7 @@ const ViewBlog = () => {
   const [image, setImage] = useState({ preview: "", raw: "" });
 
   const navigateToBlog = () => {
-    navigate("/blogs");
+    navigate("/stories");
   };
 
   //get role By ID
@@ -33,7 +33,7 @@ const ViewBlog = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>View Blog Details</h3>
+        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>View Story</h3>
       </Box>
 
       <Card>
@@ -41,7 +41,7 @@ const ViewBlog = () => {
           <Form className="admin_details_form">
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog's Heading</Form.Label>
+                <Form.Label>Story's Heading</Form.Label>
                 <Form.Control
                   name="name"
                   defaultValue={blogData?.heading}
@@ -69,7 +69,7 @@ const ViewBlog = () => {
 
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog'sDescription</Form.Label>
+                <Form.Label>Story'sDescription</Form.Label>
                 <Form.Control
                   name="name"
                   defaultValue={blogData?.description}

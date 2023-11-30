@@ -8,46 +8,85 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card } from "primereact/card";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AddCategory = () => {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [images, setImages] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null)
   const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        // Set the image preview
+        setImagePreview(reader.result);
+        setImages(e.target.files[0]);
+      };
+
+      // Read the image as a data URL
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (!title) {
       toast.error("Please enter name");
       return;
     }
-    if (!description) {
-      toast.error("Please enter description");
+    if (!images) {
+      toast.error("Please enter Image");
       return;
     }
+  
     try {
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("description", description);
-
+      formData.append("images", images);
+  
       const response = await CreateCategory(formData);
-
+  
       if (response.status === 200) {
         toast.success("Category added successfully");
+        navigate("/category");
       }
-      navigate("/category");
     } catch (error) {
-      if (error.response.status === 401) {
-        toast.error("Token expired");
-        localStorage.removeItem("adminToken");
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
+      if (error.response) {
+        if (error.response.status === 400) {
+          toast.error("Category with this name already exists");
+        } else if (error.response.status === 401) {
+          toast.error("Token expired");
+          localStorage.removeItem("adminToken");
+          setTimeout(() => {
+            navigate("/login");
+          }, 1000);
+        } else {
+          toast.error("Something went wrong");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("Network error");
       }
     }
   };
+
+  const handleRemoveImage = (e) => {
+    e.preventDefault();
+    setImages(null);
+    setImagePreview(null);
+
+    // Clear the file input value
+    const fileInput = document.getElementById("imageInput");
+    if (fileInput) {
+      fileInput.value = null;
+    }
+  };
+  
 
   const navigateToRole = () => {
     navigate("/category");
@@ -62,7 +101,7 @@ const AddCategory = () => {
         <div>
           <Form >
             <Form.Group className="mb-3">
-              <Form.Label> Title</Form.Label>
+              <Form.Label> Categoy name</Form.Label>
               <Form.Control
                 type="text"
                 required
@@ -74,16 +113,42 @@ const AddCategory = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
+              <Form.Label>Image</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="Enter Description"
-                value={description}
+                type="file"
                 required
-                onChange={(e) => setDescription(e.target.value)}
-                className="new_form_control"
+                accept="images/*"
+                id="imageInput"
+                onChange={handleImageChange}
               />
             </Form.Group>
+            {imagePreview && (
+              <div
+                style={{ position: "relative" }}
+                onClick={(e) => {
+                  handleRemoveImage(e);
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    height: "100px",
+                    width: "100px",
+                    margin: "10px",
+                  }}
+                />
+                <CloseIcon
+                  fontSize="small"
+                  color="warning"
+                  style={{
+                    position: "absolute",
+                    left: "99px",
+                  }}
+                />
+              </div>
+            )}
+
 
             <div >
               <Button

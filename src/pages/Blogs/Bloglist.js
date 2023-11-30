@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-
+import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import { GetAllBlogs, DeleteBlog } from "../../services/Api/Api";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ const Categorylist = () => {
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
+  const [menteeDataBackup, setMenteeDataBackup] = useState([]);
 
   const handleClick = (event, value) => {
     setUserIdToNavigate(value);
@@ -26,6 +27,7 @@ const Categorylist = () => {
     try {
       let result = await GetAllBlogs(localStorage.getItem("adminToken"));
       setRoleData(result.data.data);
+      setMenteeDataBackup(result.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -33,6 +35,26 @@ const Categorylist = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const onSearch = (e) => {
+    const backupData = [...menteeDataBackup];
+    const finalData = [];
+    for (let item in backupData) {
+      if (
+        // backupData[item].email_id?.includes(search) ||
+        backupData[item].heading?.toLowerCase()?.includes(e?.toLowerCase()) ||
+        backupData[item].id
+          .toString()
+          ?.toLowerCase()
+          ?.includes(e?.toLowerCase())
+      ) {
+        finalData.push(backupData[item]);
+      }
+      console.log("items=====>", backupData[item]);
+    }
+    setRoleData(finalData);
+    console.log("finalData=====>", finalData);
+  };
 
   //Code to get dynamic height
   useEffect(() => {
@@ -51,7 +73,9 @@ const Categorylist = () => {
 
   //delete category
   const removeRole = async (e, blog_id) => {
-    const confirmed = window.confirm("Do you really want to delete this Blog?");
+    const confirmed = window.confirm(
+      "Do you really want to delete this Story?"
+    );
     if (!confirmed) return;
 
     try {
@@ -60,7 +84,7 @@ const Categorylist = () => {
         localStorage.getItem("adminToken")
       );
 
-      toast.success("Blog deleted successfully!", {
+      toast.success("Story deleted successfully!", {
         position: "top-right",
         autoClose: 500,
         hideProgressBar: false,
@@ -71,7 +95,7 @@ const Categorylist = () => {
         theme: "light",
       });
       setTimeout(() => {
-        navigate("/blogs");
+        navigate("/stories");
       }, 3000);
     } catch (error) {
       if (error.response.status === 401) {
@@ -94,14 +118,14 @@ const Categorylist = () => {
   };
 
   const navigateToAddBlog = () => {
-    navigate("/addBlog");
+    navigate("/addStory");
   };
   const navigateToEditBlog = (event, id) => {
-    navigate(`/editBlog/${id}`);
+    navigate(`/editStory/${id}`);
   };
 
   const navigateToViewBlog = (event, id) => {
-    navigate(`/viewBlog/${id}`);
+    navigate(`/viewStory/${id}`);
   };
 
   const columns = [
@@ -175,10 +199,21 @@ const Categorylist = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3>Blog List</h3>
+        <h3>Stories List</h3>
         <Box>
+          <span className="p-input-icon-left">
+            <i className="pi pi-search" />
+            <InputText
+              type="search"
+              // onInput={(e) => setGlobalFilter(e.target.value)}
+              onChange={(e) => {
+                onSearch(e.target.value);
+              }}
+              placeholder="Search..."
+            />
+          </span>
           <Button
-            label=" Add New blog"
+            label=" Add New Story"
             icon="pi pi-plus"
             severity="success"
             onClick={navigateToAddBlog}

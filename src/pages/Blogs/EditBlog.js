@@ -28,7 +28,7 @@ const EditBlog = () => {
   const [selectedValue, setSelectedValue] = useState();
 
   const navigateToBlog = () => {
-    navigate("/blogs");
+    navigate("/stories");
   };
 
   //get blog By ID
@@ -36,7 +36,15 @@ const EditBlog = () => {
     GetBlogById(id)
       .then((res) => {
         setBlogData(res.data.data);
-        setCheckImage(res.data.data.blog_attachment[0].file_name);
+        // setCheckImage(res.data.data.blog_attachment[0].file_name);
+        if (
+          res.data.data.blog_attachment &&
+          res.data.data.blog_attachment.length > 0
+        ) {
+          setCheckImage(res.data.data.blog_attachment[0].file_name);
+        } else {
+          setCheckImage(null);
+        }
         const catlist = res.data.data.Categories;
         const currentCatList = [];
 
@@ -48,8 +56,10 @@ const EditBlog = () => {
           };
           currentCatList.push(temp);
         }
+        console.log("currentCatList====>", currentCatList);
         setSelectedCategoryList(currentCatList);
         console.log("blogdata", setBlogData, res.data.data);
+        console.log("setSelectedCategoryList====>", setSelectedCategoryList);
         console.log("image", setCheckImage);
       })
       .catch((err) => {
@@ -59,12 +69,9 @@ const EditBlog = () => {
 
   //get category name
   const getCategoryList = async () => {
-    // Write your code here
     let res = await GetAllCategory();
-    console.log(res?.status, res?.data?.data, res?.response);
     if (res?.status === 200) {
       setCategoryList(res?.data?.data);
-      console.log("categroy", res?.data?.data);
     } else {
     }
   };
@@ -154,9 +161,9 @@ const EditBlog = () => {
     UpdateBlog(formData)
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Blog edited successfully!");
+          toast.success("Story edited successfully!");
         }
-        navigate("/blogs");
+        navigate("/stories");
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
@@ -174,7 +181,7 @@ const EditBlog = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>Edit Blog</h3>
+        <h3 style={{ marginTop: "5px", marginBottom: "30px" }}>Edit Story</h3>
       </Box>
 
       <Card>
@@ -182,7 +189,7 @@ const EditBlog = () => {
           <Form>
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog's Heading</Form.Label>
+                <Form.Label>Story's Heading</Form.Label>
                 <Form.Control
                   name="heading"
                   defaultValue={blogData?.heading}
@@ -194,7 +201,7 @@ const EditBlog = () => {
             <Row>
               <Form.Group className="mb-3">
                 <Form.Label>Image:</Form.Label>
-               
+
                 <Form.Control
                   type="file"
                   name="image"
@@ -236,7 +243,7 @@ const EditBlog = () => {
 
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Blog's Description:</Form.Label>
+                <Form.Label>Story's Description:</Form.Label>
 
                 <CKEditor
                   editor={ClassicEditor}
@@ -301,6 +308,7 @@ const EditBlog = () => {
                 </Form.Select>
               </Form.Group>
               {selectedCategoryList.map((item, index) => {
+                console.log("selectedlist====>", selectedCategoryList);
                 return (
                   <div
                     onClick={(e) => {

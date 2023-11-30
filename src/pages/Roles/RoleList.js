@@ -171,7 +171,6 @@ const RoleList = () => {
         style={{
           height: dataGridHeight,
           width: "100%",
-          // marginLeft: "10%",
           marginTop: "20px",
         }}
       >

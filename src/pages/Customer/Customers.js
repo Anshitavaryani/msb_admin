@@ -215,33 +215,33 @@ const Customers = () => {
       cellClassName: "custom-cell",
       flex: 1,
     },
-    {
-      field: "status",
-      headerName: "Status",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      width: 150,
-      flex: 1,
-      renderCell: (cellValues) => {
-        const handleStatusChange = async (event) => {
-          const newStatus = event.target.value;
-          updateStatus(cellValues.row.id, newStatus);
-          console.log(cellValues);
-          console.log("statuss=====>", newStatus); // Use newStatus instead of cellValues.status
-        };
+    // {
+    //   field: "status",
+    //   headerName: "Status",
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   width: 150,
+    //   flex: 1,
+    //   renderCell: (cellValues) => {
+    //     const handleStatusChange = async (event) => {
+    //       const newStatus = event.target.value;
+    //       updateStatus(cellValues.row.id, newStatus);
+    //       console.log(cellValues);
+    //       console.log("statuss=====>", newStatus); // Use newStatus instead of cellValues.status
+    //     };
 
-        return (
-          <Select
-            native
-            value={cellValues.row.payment_status}
-            onChange={handleStatusChange}
-          >
-            <option value="PENDING">PENDING</option>
-            <option value="CONFIRMED">CONFIRMED</option>
-          </Select>
-        );
-      },
-    },
+    //     return (
+    //       <Select
+    //         native
+    //         value={cellValues.row.payment_status}
+    //         onChange={handleStatusChange}
+    //       >
+    //         <option value="UNSUBSCRIBED">UNSUBSCRIBED</option>
+    //         <option value="SUBSCRIBED">SUBSCRIBED</option>
+    //       </Select>
+    //     );
+    //   },
+    // },
     // {
     //   field: "is_subscribed",
     //   headerName: "Is Subscribed?",

@@ -35,10 +35,10 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="/reset-password" element={<ChangePassword />} />
-          <Route path="/blogs" element={<Bloglist />} />
-          <Route path="/addBlog" element={<Addblog />} />
-          <Route path="/editBlog/:id" element={<EditBlog />} />
-          <Route path="/viewBlog/:id" element={<ViewBlog />} />
+          <Route path="/stories" element={<Bloglist />} />
+          <Route path="/addStory" element={<Addblog />} />
+          <Route path="/editStory/:id" element={<EditBlog />} />
+          <Route path="/viewStory/:id" element={<ViewBlog />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/addCustomer" element={<AddCustomer />} />
           <Route path="/viewCustomer/:id" element={<ViewCustomer />} />

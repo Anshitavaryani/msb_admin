@@ -12,13 +12,22 @@ import { Button } from "primereact/button";
 const AddCustomer = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!name || !email) {
-      toast.error("Please enter name and email");
+    if (!name ) {
+      toast.error("Please enter name ");
+      return;
+    }
+    if (!email) {
+      toast.error("Please enter  email");
+      return;
+    }
+    if (!paymentStatus) {
+      toast.error("Please select Payment status");
       return;
     }
 
@@ -26,6 +35,7 @@ const AddCustomer = () => {
       const response = await AddUser({
         email: email,
         name: name,
+        payment_status: paymentStatus,
       });
 
       if (response.status === 200) {
@@ -85,8 +95,22 @@ const AddCustomer = () => {
               />
             </Form.Group>
 
+            <Form.Group className="mb-3">
+              <Form.Label>Payment Status:</Form.Label>
+              <Form.Select
+                aria-label="Default select example"
+                className="new_form_control"
+                value={paymentStatus}
+                onChange={(e) => setPaymentStatus(e.target.value)}
+              >
+                <option>Select Status:</option>
+                <option value="SUBSCRIBED">SUBSCRIBED</option>
+                <option value="UBSUBSCRIBED">UNSUBSCRIBED</option>
+              </Form.Select>
+            </Form.Group>
+
             <div>
-            <Button
+              <Button
                 icon="pi pi-check"
                 severity="success"
                 type="submit"
