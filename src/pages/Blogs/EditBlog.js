@@ -189,7 +189,7 @@ const EditBlog = () => {
           <Form>
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Story's Heading</Form.Label>
+                <Form.Label>Story's Heading:</Form.Label>
                 <Form.Control
                   name="heading"
                   defaultValue={blogData?.heading}
@@ -214,7 +214,7 @@ const EditBlog = () => {
                     {image.preview === "" ? (
                       <img
                         src={`${BASE_URL_IMAGE}${blogData.blog_attachment[0].file_name}`}
-                        alt="Blog Icon"
+                        alt="Story Icon"
                         style={{
                           height: "100px",
                           width: "100px",
@@ -243,7 +243,7 @@ const EditBlog = () => {
 
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Story's Description:</Form.Label>
+                <Form.Label>Story's Content:</Form.Label>
 
                 <CKEditor
                   editor={ClassicEditor}
@@ -258,7 +258,7 @@ const EditBlog = () => {
             </Row>
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Type</Form.Label>
+                <Form.Label>Type:</Form.Label>
                 <Form.Select
                   aria-label="Default select example"
                   className="new_form_control"
@@ -281,8 +281,9 @@ const EditBlog = () => {
             </Row>
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Categories</Form.Label>
+                <Form.Label>Categories:</Form.Label>
                 <Form.Control
+                  disabled
                   name="type"
                   type="text"
                   defaultValue={blogData?.Categories?.map(
@@ -293,7 +294,7 @@ const EditBlog = () => {
             </Row>
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Select Category list</Form.Label>
+                <Form.Label>Select Category:</Form.Label>
 
                 <Form.Select
                   aria-label="Default select example"
@@ -344,7 +345,7 @@ const EditBlog = () => {
                 }}
                 style={{ borderRadius: "10px", marginLeft: "10px" }}
               >
-                Return to Blog List
+                Return to Story List
               </Button>
             </div>
           </Form>

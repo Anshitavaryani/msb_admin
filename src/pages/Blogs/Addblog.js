@@ -173,18 +173,18 @@ const Addblog = () => {
         <div>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label> Heading</Form.Label>
+              <Form.Label> Heading:</Form.Label>
               <Form.Control
                 type="text"
                 required
-                placeholder="Enter Blog heading"
+                placeholder="Enter Story heading"
                 value={heading}
                 onChange={(e) => setHeading(e.target.value)}
                 className="new_form_control"
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Image</Form.Label>
+              <Form.Label>Image:</Form.Label>
               <Form.Control
                 type="file"
                 required
@@ -221,7 +221,7 @@ const Addblog = () => {
             )}
 
             <Form.Group className="mb-3">
-              <Form.Label> Blog Description</Form.Label>
+              <Form.Label> Story's Description:</Form.Label>
 
               <CKEditor
                 editor={ClassicEditor}
@@ -245,7 +245,7 @@ const Addblog = () => {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Select Category list</Form.Label>
+              <Form.Label>Select Category:</Form.Label>
 
               <Form.Select
                 aria-label="Default select example"

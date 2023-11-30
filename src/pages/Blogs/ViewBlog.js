@@ -41,7 +41,7 @@ const ViewBlog = () => {
           <Form className="admin_details_form">
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Story's Heading</Form.Label>
+                <Form.Label>Story's Heading:</Form.Label>
                 <Form.Control
                   name="name"
                   defaultValue={blogData?.heading}
@@ -69,7 +69,7 @@ const ViewBlog = () => {
 
             <Row>
               <Form.Group className="mb-3">
-                <Form.Label>Story'sDescription</Form.Label>
+                <Form.Label>Story's Content:</Form.Label>
                 <Form.Control
                   name="name"
                   defaultValue={blogData?.description}
@@ -114,7 +114,7 @@ const ViewBlog = () => {
                 }}
                 style={{ borderRadius: "10px", marginLeft: "10px" }}
               >
-                Return to Blog List
+                Return to Story List
               </Button>
             </div>
           </Form>

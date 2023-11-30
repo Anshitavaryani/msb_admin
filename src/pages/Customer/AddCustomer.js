@@ -18,7 +18,7 @@ const AddCustomer = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!name ) {
+    if (!name) {
       toast.error("Please enter name ");
       return;
     }
@@ -104,12 +104,12 @@ const AddCustomer = () => {
                 onChange={(e) => setPaymentStatus(e.target.value)}
               >
                 <option>Select Status:</option>
-                <option value="SUBSCRIBED">SUBSCRIBED</option>
-                <option value="UBSUBSCRIBED">UNSUBSCRIBED</option>
+                <option value="SUBSCRIBED">PAID</option>
+                <option value="UBSUBSCRIBED">UNPAID</option>
               </Form.Select>
             </Form.Group>
 
-            <div>
+            <div style={{ marginTop: "60px" }}>
               <Button
                 icon="pi pi-check"
                 severity="success"

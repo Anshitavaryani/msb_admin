@@ -101,11 +101,11 @@ const AddCategory = () => {
         <div>
           <Form >
             <Form.Group className="mb-3">
-              <Form.Label> Categoy name</Form.Label>
+              <Form.Label> Category name:</Form.Label>
               <Form.Control
                 type="text"
                 required
-                placeholder="Enter title"
+                placeholder="Enter Category name"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="new_form_control"
@@ -113,7 +113,7 @@ const AddCategory = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Image</Form.Label>
+              <Form.Label>Image:</Form.Label>
               <Form.Control
                 type="file"
                 required

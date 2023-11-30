@@ -49,7 +49,7 @@ const ViewCustomer = () => {
                 userData?.attachements[0]?.file_name ? (
                   <img
                     src={`${BASE_URL_IMAGE}${userData?.attachements[0]?.file_name}`}
-                    alt="Blog Icon"
+                    alt="Story Icon"
                     className="category-icon-preview"
                     style={{ height: "100px", width: "100px" }}
                   />
