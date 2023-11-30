@@ -135,7 +135,7 @@ const MainLayout = () => {
               </span>
             </div> */}
                 <div className="position-relative">
-                  <Link to="https://mystorybank.info/" unstable_viewTransition>
+                  <Link to="https://mystorybank.info/" target="_blank">
                     Visit Website
                   </Link>
                 </div>

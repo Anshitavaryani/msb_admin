@@ -19,12 +19,13 @@ export const GetUsers = async () => {
   return res;
 };
 
+//get userby id
 export const GetUserById = async (id) => {
   return await axios.get(BASE_URL + "admin/getUserById?id=" + id);
 };
 
 //admin add user
-export const AddUser = async ({ email, name,payment_status }) => {
+export const AddUser = async ({ email, name, payment_status }) => {
   const formData = new FormData();
 
   formData.append("email", email);
@@ -52,16 +53,20 @@ export const DeleteUser = async (user_id, adminToken) => {
   });
 };
 
+
+//get all roles
 export const GetAllRoles = async () => {
   const res = await axios.get(BASE_URL + "role/all");
 
   return res;
 };
 
+//get role byid
 export const GetRoleById = async (id) => {
   return await axios.get(BASE_URL + "role/getRolebyId?id=" + id);
 };
 
+//create role
 export const CreateRole = async (formData) => {
   return await axios.post(BASE_URL + "role/create", formData, {
     headers: {
@@ -71,6 +76,7 @@ export const CreateRole = async (formData) => {
   });
 };
 
+//update role
 export const UpdateRoles = async (formData) => {
   return await axios.put(BASE_URL + "role/editRole", formData, {
     headers: {
@@ -80,6 +86,7 @@ export const UpdateRoles = async (formData) => {
   });
 };
 
+//delete role
 export const DeleteRole = async (role_id, adminToken) => {
   const formData = new FormData();
   formData.append("role_id", role_id);
@@ -92,11 +99,13 @@ export const DeleteRole = async (role_id, adminToken) => {
   });
 };
 
+//get all categroy
 export const GetAllCategory = async () => {
   const res = await axios.get(BASE_URL + "category/all");
   return res;
 };
 
+//get category by id
 export const GetCategoryById = async (id) => {
   return await axios.get(BASE_URL + "category/getCategoryById?id=" + id);
 };
@@ -235,4 +244,24 @@ export const ChangePaymentStatus = async ({ user_id, payment_status }) => {
   formData.append("payment_status", payment_status);
 
   return await axios.post(BASE_URL + "admin/updatepaymentStatus", formData);
+};
+
+export const GetUserCount = async () => {
+  const res = await axios.get(BASE_URL + "admin/getCount");
+  return res;
+};
+
+export const GetBlogCount = async () => {
+  const res = await axios.get(BASE_URL + "admin/getBlogCount");
+  return res;
+};
+
+export const GetCategoryCount = async () => {
+  const res = await axios.get(BASE_URL + "admin/getCategoryCount");
+  return res;
+};
+
+export const GetUserCountByMonth = async () => {
+  const res = await axios.get(BASE_URL + "admin/getUserCountByMonth");
+  return res;
 };
