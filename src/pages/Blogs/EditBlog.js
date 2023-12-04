@@ -256,6 +256,7 @@ const EditBlog = () => {
                 />
               </Form.Group>
             </Row>
+            
             <Row>
               <Form.Group className="mb-3">
                 <Form.Label>Type:</Form.Label>

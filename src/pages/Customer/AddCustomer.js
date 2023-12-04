@@ -105,7 +105,7 @@ const AddCustomer = () => {
               >
                 <option>Select Status:</option>
                 <option value="SUBSCRIBED">PAID</option>
-                <option value="UBSUBSCRIBED">UNPAID</option>
+                <option value="UNSUBSCRIBED">UNPAID</option>
               </Form.Select>
             </Form.Group>
 
