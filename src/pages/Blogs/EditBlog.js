@@ -49,18 +49,14 @@ const EditBlog = () => {
         const currentCatList = [];
 
         for (let item in catlist) {
-          console.log(catlist[item].id, "id");
           const temp = {
             id: catlist[item].id,
             title: catlist[item].title,
           };
           currentCatList.push(temp);
         }
-        console.log("currentCatList====>", currentCatList);
+
         setSelectedCategoryList(currentCatList);
-        console.log("blogdata", setBlogData, res.data.data);
-        console.log("setSelectedCategoryList====>", setSelectedCategoryList);
-        console.log("image", setCheckImage);
       })
       .catch((err) => {
         console.log(err, "error");
@@ -81,7 +77,7 @@ const EditBlog = () => {
   }, []);
 
   const handleCategory = (e) => {
-    console.log("item==>", e.target.value);
+
     let categoryTitle = "";
     for (let i in categoryList) {
       if (categoryList[i].id == e.target.value) {
@@ -97,7 +93,7 @@ const EditBlog = () => {
     category.push(temp);
 
     setSelectedCategoryList(category);
-    console.log("categoryyyyy===>", category);
+
   };
 
   const handleRemoveCategory = (e, item) => {
@@ -105,7 +101,7 @@ const EditBlog = () => {
     let category = [...selectedCategoryList];
     category = category.filter((e) => e.title !== item.title);
     setSelectedCategoryList(category);
-    console.log("categoryyyyy===>", category);
+
   };
 
   const handleEditorChange = (event, editor) => {
@@ -118,7 +114,6 @@ const EditBlog = () => {
   };
 
   const handleImageChange = (e) => {
-    console.log("imageessss===>", e.target.value);
     if (e.target.files.length) {
       setImage({
         preview: URL.createObjectURL(e.target.files[0]),
@@ -256,7 +251,7 @@ const EditBlog = () => {
                 />
               </Form.Group>
             </Row>
-            
+
             <Row>
               <Form.Group className="mb-3">
                 <Form.Label>Type:</Form.Label>
@@ -310,7 +305,6 @@ const EditBlog = () => {
                 </Form.Select>
               </Form.Group>
               {selectedCategoryList.map((item, index) => {
-                console.log("selectedlist====>", selectedCategoryList);
                 return (
                   <div
                     onClick={(e) => {

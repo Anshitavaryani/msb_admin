@@ -44,13 +44,13 @@ export default function AdminList() {
       const data = response.data.data; // Assuming the actual data is in response.data.data
       // Now you have the data from the API in the 'data' variable.
       // You can set the data to the 'products' state or process it as needed.
-      // console.log(data,"data")
+  
       setProducts(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  console.log(products, "products");
+
   const formatCurrency = (value) => {
     return value?.toLocaleString("en-US", {
       style: "currency",

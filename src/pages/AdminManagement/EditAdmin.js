@@ -23,9 +23,6 @@ const EditAdmin = () => {
       .then((res) => {
         setIdData(res.data.data);
         setSelectedRole(res.data.data.admin_roles.id);
-
-        console.log("rolebyid", res.data.data);
-        console.log("rolebyid===>", id);
       })
       .catch((err) => {
         console.log(err, "error");
@@ -37,7 +34,7 @@ const EditAdmin = () => {
 
     if (res?.status === 200) {
       setRoleList(res?.data?.data);
-      console.log("roles", res?.data?.data);
+
     } else {
     }
   };
@@ -47,14 +44,13 @@ const EditAdmin = () => {
 
   const handleCategory = (e) => {
     e.preventDefault();
-    console.log("Submit email:", idData.email);
+
     const role = e.target.value;
     setSelectedRole(role);
   };
 
   //update role api implementation
   const onChange = (e) => {
-    console.log("onChange email:", e.target.value);
     setIdData({ ...idData, [e.target.name]: e.target.value });
   };
 

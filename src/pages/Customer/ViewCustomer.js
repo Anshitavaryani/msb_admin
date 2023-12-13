@@ -23,8 +23,6 @@ const ViewCustomer = () => {
     GetUserById(id)
       .then((res) => {
         setUserData(res.data.data);
-        console.log("rolebyid", res.data.data);
-        // console.log("imagessss", blogData?.blogs[0]?.file_name);
       })
       .catch((err) => {
         console.log(err, "error");

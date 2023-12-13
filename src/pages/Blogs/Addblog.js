@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
+import imageCompression from "browser-image-compression";
 
 const Addblog = () => {
   const navigate = useNavigate();
@@ -19,32 +20,86 @@ const Addblog = () => {
   const [images, setImages] = useState(null);
   const [selectedCategoryList, setSelectedCategoryList] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+  const [disable, setDisable] = useState(false);
 
-  const handleImageChange = (e) => {
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+
+  //   if (file) {
+  //     const reader = new FileReader();
+
+  //     reader.onloadend = () => {
+  //       // Set the image preview
+  //       setImagePreview(reader.result);
+  //       setImages(e.target.files[0]);
+  //     };
+
+  //     // Read the image as a data URL
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-
+  
     if (file) {
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-        // Set the image preview
-        setImagePreview(reader.result);
-        setImages(e.target.files[0]);
-      };
-
-      // Read the image as a data URL
-      reader.readAsDataURL(file);
+      const allowedTypes = ["image/jpeg", "image/jpg"]; // Add more allowed types if needed
+  
+      if (!allowedTypes.includes(file.type)) {
+        console.error("Error: Invalid file type. Images (JPEG, JPG) only!");
+        return;
+      }
+  
+      if (file.size <= 1024 * 1024) {
+        // If image size is less than or equal to 1 MB, no need to compress
+        setImages(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Compress the image to 25% if its size is more than 1 MB
+        try {
+          const compressedFile = await imageCompression(file, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+          });
+  
+          // Check if compression actually reduced the size
+          if (compressedFile.size < file.size) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setImagePreview(reader.result);
+              setImages(new Blob([compressedFile], { type: "image/jpeg" }));
+            };
+            reader.readAsDataURL(compressedFile);
+          } else {
+            // If compression did not reduce the size, use the original image
+            setImages(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        } catch (error) {
+          console.error("Error compressing image:", error);
+        }
+      }
     }
   };
+  
+  
+  
 
   //get category name
   const getCategoryList = async () => {
     // Write your code here
     let res = await GetAllCategory();
-    console.log(res?.status, res?.data?.data, res?.response);
+
     if (res?.status === 200) {
       setCategoryList(res?.data?.data);
-      console.log("categroy", res?.data?.data);
     } else {
     }
   };
@@ -53,15 +108,8 @@ const Addblog = () => {
     getCategoryList();
   }, []);
 
-  // const handleCategory = (e) => {
-  //   console.log("item==>", e.target.value);
-  //   e.preventDefault();
-  //   let category = [...selectedCategoryList];
-  //   category.push(e.target.value);
-  //   setSelectedCategoryList(category);
-  // };
   const handleCategory = (e) => {
-    console.log("item==>", e.target.value);
+  
     let categoryTitle = "";
     for (let i in categoryList) {
       if (categoryList[i].id == e.target.value) {
@@ -77,7 +125,6 @@ const Addblog = () => {
     category.push(temp);
 
     setSelectedCategoryList(category);
-    console.log("categoryyyyy===>", category);
   };
 
   const handleRemoveCategory = (e, item) => {
@@ -85,7 +132,6 @@ const Addblog = () => {
     let category = [...selectedCategoryList];
     category = category.filter((e) => e !== item);
     setSelectedCategoryList(category);
-    console.log("categoryyyyy===>", category);
   };
 
   const handleRemoveImage = (e) => {
@@ -107,6 +153,7 @@ const Addblog = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setDisable(true);
 
     if (!heading) {
       toast.error("Please enter heading");
@@ -125,7 +172,10 @@ const Addblog = () => {
       formData.append("heading", heading);
       formData.append("description", description);
       formData.append("type", type);
-      formData.append("images", images);
+      if (images) {
+        formData.append("images", images, "compressed_image.jpg");
+      }
+      // formData.append("images", images);
       // formData.append(
       //   "categories",
       //   selectedCategoryList.length > 0 ? selectedCategoryList.join(",") : ""
@@ -139,17 +189,27 @@ const Addblog = () => {
       }
 
       const response = await CreateBlog(formData);
-      console.log("response===>", response);
 
       if (response.status === 200) {
         toast.success("Story added successfully");
         setTimeout(() => {
-          // Refresh the page
           window.location.reload();
         }, 1000);
       }
+      setDisable(false);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response.status === 400) {
+        toast.error("Story with this title already exist", {
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.response.status === 401) {
         toast.error("Token expired");
         localStorage.removeItem("adminToken");
         setTimeout(() => {
@@ -158,6 +218,7 @@ const Addblog = () => {
       } else {
         toast.error("Something went wrong");
       }
+      setDisable(false);
     }
   };
 
@@ -260,7 +321,6 @@ const Addblog = () => {
               </Form.Select>
             </Form.Group>
             {selectedCategoryList.map((item, index) => {
-              console.log("slecetlist==>", selectedCategoryList);
               return (
                 <div
                   onClick={(e) => {
@@ -278,6 +338,7 @@ const Addblog = () => {
                 severity="success"
                 type="submit"
                 onClick={handleSubmit}
+                disabled={disable}
                 style={{
                   borderRadius: "10px",
                   marginLeft: "10px",
@@ -285,7 +346,7 @@ const Addblog = () => {
                   // width:"10px"
                 }}
               >
-                Save
+                {disable ? "Saving...." : "Save"}
               </Button>
 
               <Button

@@ -188,7 +188,6 @@ const RoleList = () => {
               selectedIDs.has(row.id.toString())
             );
             setUserId(selectedIDs);
-            console.log("selectedRowData", selectedRowData);
           }}
         />
       </div>

@@ -1,40 +1,21 @@
-import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Button } from "primereact/button";
+import {
+  GetAllSocialLogin,
+  DeleteSocialLogin,
+} from "../../../services/Api/Api";
+import { toast } from "react-toastify";
 import { DataGrid } from "@mui/x-data-grid";
 
-import { useNavigate } from "react-router-dom";
-import { GetAdmins, DeleteAdmin } from "../../services/Api/Api";
-import { toast } from "react-toastify";
-import { Button } from "primereact/button";
-
-const AdminUser = () => {
+const SocialLogins = () => {
   const navigate = useNavigate();
+  const [contentData, setContentData] = useState("");
   const [pageSize, setPageSize] = useState(50);
   const [dataGridHeight, setDataGridHeight] = useState("550px");
-  const [roleData, setRoleData] = useState([]);
-  const [anchorEl, setAnchorEl] = React.useState();
-  const [userId, setUserId] = useState();
-  const [userIdToNavigate, setUserIdToNavigate] = useState();
 
-  const handleClick = (event, value) => {
-    setUserIdToNavigate(value);
-    setAnchorEl(event.currentTarget);
-  };
 
-  //get all specialist
-  const getData = async () => {
-    try {
-      let result = await GetAdmins(localStorage.getItem("adminToken"));
-      setRoleData(result.data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  useEffect(() => {
-    getData();
-  }, []);
-
-  //Code to get dynamic height
   useEffect(() => {
     // Update dataGridHeight based on the pageSize value
     if (pageSize === 50) {
@@ -47,22 +28,33 @@ const AdminUser = () => {
       // Set a default height if pageSize is not 10 or 15
       setDataGridHeight("550px");
     }
-  }, [pageSize]);
+  }, [pageSize])
+  //get content data
+  const getData = async () => {
+    try {
+      let result = await GetAllSocialLogin(localStorage.getItem("adminToken"));
+      setContentData(result.data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
-  //delete role
-  const removeAdmin = async (e, admin_id) => {
+  const removeContent = async (e, content_id) => {
     const confirmed = window.confirm(
-      "Do you really want to delete this admin?"
+      "Do you really want to delete this Content?"
     );
     if (!confirmed) return;
 
     try {
-      const result = await DeleteAdmin(
-        admin_id,
+      const result = await DeleteSocialLogin(
+        content_id,
         localStorage.getItem("adminToken")
       );
 
-      toast.success("Role deleted successfully!", {
+      toast.success("Content deleted successfully!", {
         position: "top-right",
         autoClose: 500,
         hideProgressBar: false,
@@ -74,10 +66,10 @@ const AdminUser = () => {
       });
       window.location.reload(true);
       setTimeout(() => {
-        navigate("/adminList");
+        navigate("/socialLogins");
       }, 3000);
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error.response.status === 401) {
         toast.error("Token expired", {
           position: "top-right",
           autoClose: 500,
@@ -96,39 +88,62 @@ const AdminUser = () => {
     }
   };
 
-  const navigateToAddAdmin = () => {
-    navigate("/addAdmin");
+  const navigateToAddSocialLogin = () => {
+    navigate("/addSocialLogin");
   };
-  const navigateToEditAdmin = (event, id) => {
-    navigate(`/editAdmin/${id}`);
+
+  const navigateToEditContent = (event, id) => {
+    navigate(`/editSocialLogin/${id}`);
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 150 },
+    { field: "id", headerName: "ID", width: 50 },
     {
-      field: "name",
-      headerName: "Name",
+      field: "social_media_name",
+      headerName: "Media Name",
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
     },
+
     {
-      field: "email_id",
-      headerName: "Email",
+      field: "redirection_url",
+      headerName: "Link",
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
     },
+
     {
-      field: "role",
-      headerName: "Role",
-      width: 350,
+      field: "image",
+      headerName: "Icon",
+      width: 150,
+      flex: 1,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
-      valueGetter: (params) => params.row.admin_roles?.name || "",
+      sortable: false,
+      renderCell: (cellValues) => {
+        const attachment = cellValues.row;
+        const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
+
+        if (imageUrl) {
+          return (
+            <div>
+              <img
+                src={imageUrl}
+                alt="Category Icon"
+                className="category-icon-preview_in_list"
+                style={{ width: "100px", height: "60px" }}
+              />
+            </div>
+          );
+        } else {
+          // Handle the case where there are no attachments for the user
+          return <div>No Image Available</div>;
+        }
+      },
     },
 
     {
@@ -147,31 +162,30 @@ const AdminUser = () => {
               outlined
               className="mr-2"
               style={{ margin: "0px 10px" }}
-              onClick={(event) => navigateToEditAdmin(event, cellValues.id)}
+              onClick={(event) => navigateToEditContent(event, cellValues.id)}
             />
             <Button
               icon="pi pi-trash"
               rounded
               outlined
               severity="danger"
-              onClick={(e) => removeAdmin(e, cellValues.id)}
+              onClick={(e) => removeContent(e, cellValues.id)}
             />
           </div>
         );
       },
     },
   ];
-
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3>Admin List</h3>
+        <h3>Social Media List</h3>
         <Box>
           <Button
-            label=" Add New Admin"
+            label=" Add New Social Media"
             icon="pi pi-plus"
             severity="success"
-            onClick={navigateToAddAdmin}
+            onClick={navigateToAddSocialLogin}
             style={{ margin: "0px 10px" }}
           />
         </Box>
@@ -185,7 +199,7 @@ const AdminUser = () => {
         }}
       >
         <DataGrid
-          rows={roleData}
+          rows={contentData}
           columns={columns}
           pageSize={pageSize}
           rowHeight={80}
@@ -194,10 +208,10 @@ const AdminUser = () => {
           experimentalFeatures={{ newEditingApi: true }}
           onSelectionModelChange={(id) => {
             const selectedIDs = new Set([id]);
-            const selectedRowData = roleData.filter((row) =>
+            const selectedRowData = contentData.filter((row) =>
               selectedIDs.has(row.id.toString())
             );
-            setUserId(selectedIDs);
+            setContentData(selectedIDs);
           }}
         />
       </div>
@@ -205,4 +219,4 @@ const AdminUser = () => {
   );
 };
 
-export default AdminUser;
+export default SocialLogins;

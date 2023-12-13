@@ -9,7 +9,7 @@ import { InputText } from "primereact/inputtext";
 import "./Customers.css";
 import axios from "axios";
 import { BASE_URL } from "../../services/Host";
-import {  Select } from "@mui/material";
+import { Select } from "@mui/material";
 
 const Customers = () => {
   const [pageSize, setPageSize] = useState(50);
@@ -33,7 +33,6 @@ const Customers = () => {
       let result = await GetUsers(localStorage.getItem("adminToken"));
       setUserData(result.data.data);
       setMenteeDataBackup(result.data.data);
-      console.log("user", result.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -58,9 +57,7 @@ const Customers = () => {
   }, [pageSize]);
 
   const removeUser = async (e, user_id) => {
-    const confirmed = window.confirm(
-      "Do you really want to delete this mentee?"
-    );
+    const confirmed = window.confirm("Do you really want to delete this user?");
     if (!confirmed) return;
 
     try {
@@ -106,7 +103,6 @@ const Customers = () => {
     navigate("/addCustomer");
   };
 
-
   const navigateToViewUser = (event, id) => {
     navigate(`/viewCustomer/${id}`);
   };
@@ -125,10 +121,8 @@ const Customers = () => {
       ) {
         finalData.push(backupData[item]);
       }
-      console.log("items=====>", backupData[item]);
     }
     setUserData(finalData);
-    console.log("finalData=====>", finalData);
   };
 
   const data = [
@@ -153,8 +147,6 @@ const Customers = () => {
         }
       );
       // Handle success
-      console.log(response.data);
-      console.log("User status updated successfully");
       window.location.reload(true);
     } catch (error) {
       // Handle error
@@ -226,8 +218,8 @@ const Customers = () => {
     //     const handleStatusChange = async (event) => {
     //       const newStatus = event.target.value;
     //       updateStatus(cellValues.row.id, newStatus);
-    //       console.log(cellValues);
-    //       console.log("statuss=====>", newStatus); // Use newStatus instead of cellValues.status
+    //
+    //
     //     };
 
     //     return (

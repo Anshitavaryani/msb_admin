@@ -2,13 +2,13 @@ import { Box } from "@mui/material";
 import React, { useLayoutEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { GetCategoryById, UpdateCategory } from "../../services/Api/Api.jsx";
+import { GetSocialLoginById,UpdateSocialLogin } from "../../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { BASE_URL_IMAGE } from "../../services/Host";
+import { BASE_URL_IMAGE } from "../../../services/Host";
 
-const EditCategory = () => {
+const EditSocialLogin = () => {
   const { id } = useParams();
   const [idData, setIdData] = React.useState({});
   const [checkImage, setCheckImage] = React.useState(null);
@@ -16,7 +16,7 @@ const EditCategory = () => {
 
   //get role By ID
   useLayoutEffect(() => {
-    GetCategoryById(id)
+    GetSocialLoginById(id)
       .then((res) => {
         setIdData(res.data.data);
         setCheckImage(res.data.data.file_name);
@@ -45,18 +45,19 @@ const EditCategory = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("category_id", id);
-    formData.append("title", idData?.title ? idData?.title : "");
+    formData.append("content_id", id);
+    formData.append("social_media_name", idData?.social_media_name ? idData?.social_media_name : "");
+    formData.append("redirection_url", idData?.redirection_url ? idData?.redirection_url : "");
     if (idData.image) {
       formData.append("images", idData.image);
     }
 
-    UpdateCategory(formData)
+    UpdateSocialLogin(formData)
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Category edited successfully!");
+          toast.success("Social Media edited successfully!");
         }
-        navigate("/category");
+        navigate("/socialLogins");
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
@@ -72,27 +73,38 @@ const EditCategory = () => {
   };
 
   const navigate = useNavigate();
-  const navigateToRole = () => {
-    navigate("/category");
+  const navigateToSocialList = () => {
+    navigate("/socialLogins");
   };
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginBottom: "60px" }}>Edit Category</h3>
+        <h3 style={{ marginBottom: "60px" }}>Edit Social Media Content</h3>
       </Box>
       <Card>
         <div>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
+              <Form.Label>Social Media Name</Form.Label>
               <Form.Control
                 type="text"
-                defaultValue={idData?.title}
-                name="title"
+                defaultValue={idData?.social_media_name}
+                name="social_media_name"
                 onChange={(e) => onChange(e)}
-                placeholder="Enter title"
               />
             </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Redirection Url</Form.Label>
+              <Form.Control
+                type="text"
+                defaultValue={idData?.redirection_url}
+                name="redirection_url"
+                onChange={(e) => onChange(e)}
+              />
+            </Form.Group>
+
+            
             <Form.Group className="mb-3">
               <Form.Label>Image:</Form.Label>
 
@@ -151,7 +163,7 @@ const EditCategory = () => {
               icon="pi pi-times"
               severity="secondary"
               onClick={(e) => {
-                navigateToRole();
+                navigateToSocialList();
               }}
               style={{ borderRadius: "10px", marginLeft: "10px" }}
             >
@@ -164,4 +176,5 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default EditSocialLogin;
+

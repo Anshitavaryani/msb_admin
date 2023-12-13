@@ -19,10 +19,25 @@ import Addblog from "./pages/Blogs/Addblog";
 import Bloglist from "./pages/Blogs/Bloglist";
 import ViewBlog from "./pages/Blogs/ViewBlog";
 import EditBlog from "./pages/Blogs/EditBlog";
+import CommentList from "./pages/Blogs/CommentList";
 import AdminUser from "./pages/AdminManagement/AdminUser";
 import ViewAdmin from "./pages/AdminManagement/ViewAdmin";
 import AddAdmin from "./pages/AdminManagement/AddAdmin";
 import EditAdmin from "./pages/AdminManagement/EditAdmin";
+import LoginLogs from "./pages/LoginLogs";
+import BannerContent from "./pages/HomePage/BannerContent/BannerContent";
+import AddBannerContent from "./pages/HomePage/BannerContent/AddBannerContent";
+import EditBannerContent from "./pages/HomePage/BannerContent/EditBannerContent";
+import SectionContent from "./pages/HomePage/SectionContent/SectionContent";
+import AddSectionContent from "./pages/HomePage/SectionContent/AddSectionContent";
+import EditSectionContent from "./pages/HomePage/SectionContent/EditSectionContent";
+import CardContent from "./pages/HomePage/CardContent/CardContent";
+import AddCardContent from "./pages/HomePage/CardContent/AddCardContent";
+import EditCardContent from "./pages/HomePage/CardContent/EditCardContent";
+import SocialLogins from "./pages/HomePage/SocialLogins/SocialLogins";
+import AddSocialLogin from "./pages/HomePage/SocialLogins/AddSocialLogin";
+import EditSocialLogin from "./pages/HomePage/SocialLogins/EditSocialLogin";
+
 
 
 function App() {
@@ -39,6 +54,7 @@ function App() {
           <Route path="/addStory" element={<Addblog />} />
           <Route path="/editStory/:id" element={<EditBlog />} />
           <Route path="/viewStory/:id" element={<ViewBlog />} />
+          <Route path="/commentList/:blog_id" element={<CommentList />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/addCustomer" element={<AddCustomer />} />
           <Route path="/viewCustomer/:id" element={<ViewCustomer />} />
@@ -53,6 +69,19 @@ function App() {
           <Route path="/viewAdmin" element={<ViewAdmin />} />
           <Route path="/addAdmin" element={<AddAdmin />} />
           <Route path="/editAdmin/:id" element={<EditAdmin />} />
+          <Route path="/loginLogs" element={<LoginLogs />} />
+          <Route path="/bannerContent" element={<BannerContent />} />
+          <Route path="/addBannerContent" element={<AddBannerContent />} />
+          <Route path="/editBannerContent" element={<EditBannerContent />} />
+          <Route path="/sectionContent" element={<SectionContent />} />
+          <Route path="/addSectionContent" element={<AddSectionContent />} />
+          <Route path="/editSectionContent" element={<EditSectionContent />} />
+          <Route path="/cardContent" element={< CardContent/>} />
+          <Route path="/addCardContent" element={< AddCardContent/>} />
+          <Route path="/editCardContent" element={< EditCardContent/>} />
+          <Route path="/socialLogins" element={<SocialLogins />} />
+          <Route path="/addSocialLogin" element={<AddSocialLogin />} />
+          <Route path="/editSocialLogin/:id" element={<EditSocialLogin />} />
         </Route>
         {/* <Route path = "/customers" element={<MainLayout> <Customers/></MainLayout>}/> */}
       </Routes>

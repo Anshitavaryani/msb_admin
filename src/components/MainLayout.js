@@ -8,7 +8,14 @@ import { Outlet } from "react-router-dom";
 import { FaUsers, FaRegSun, FaUser } from "react-icons/fa";
 import { ImBlog } from "react-icons/im";
 import { FaBloggerB } from "react-icons/fa";
+import { MdOutlineCategory } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
+import { MdAutoStories } from "react-icons/md";
+import { MdOutlineAutoStories } from "react-icons/md";
+import { FaHome } from "react-icons/fa";
+import { MdOutlineDashboard } from "react-icons/md";
+import { BsCardList } from "react-icons/bs";
+import { PiChatsBold } from "react-icons/pi";
 import { toast } from "react-toastify";
 import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -89,18 +96,45 @@ const MainLayout = () => {
                 },
                 {
                   key: "stories",
-                  icon: <FaBloggerB className="fs-4" />,
+                  icon: <MdAutoStories className="fs-4" />,
                   label: "Stories",
                   children: [
                     {
                       key: "addStory",
-                      icon: <ImBlog className="fs-4" />,
+                      icon: <MdOutlineAutoStories className="fs-4" />,
                       label: "Add Story",
                     },
                     {
                       key: "stories",
-                      icon: <FaBloggerB className="fs-4" />,
+                      icon: <MdOutlineAutoStories className="fs-4" />,
                       label: "Stories List",
+                    },
+                  ],
+                },
+                {
+                  key: "bannerContent",
+                  icon: <FaHome className="fs-4" />,
+                  label: "Home Page",
+                  children: [
+                    {
+                      key: "sectionContent",
+                      icon: <MdOutlineDashboard className="fs-4" />,
+                      label: "Section Content",
+                    },
+                    {
+                      key: "bannerContent",
+                      icon: <MdOutlineCategory className="fs-4" />,
+                      label: "Banner Content",
+                    },
+                    {
+                      key: "cardContent",
+                      icon: <BsCardList className="fs-4" />,
+                      label: "Card Content",
+                    },
+                    {
+                      key: "socialLogins",
+                      icon: <PiChatsBold className="fs-4" />,
+                      label: "Social Logins",
                     },
                   ],
                 },

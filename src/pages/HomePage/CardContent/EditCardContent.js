@@ -1,26 +1,40 @@
 import { Box } from "@mui/material";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Form } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
-import { GetRoleById, UpdateRoles } from "../../services/Api/Api.jsx";
+import { useParams, useNavigate,useLocation } from "react-router-dom";
+import { GetCardContentById,UpdateCardContent } from "../../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-const EditRole = () => {
+
+const EditCardContent = () => {
+  const location = useLocation();
+
+  const { data } = location.state;
+  console.log("cardadta==>",data,data.id)
   const { id } = useParams();
-  const [idData, setIdData] = React.useState({});
+  const [idData, setIdData] = useState({
+    card_content: data?.card_content || "",
+    redirection_url: data?.redirection_url || "",
+  });
+
 
   //get role By ID
   useLayoutEffect(() => {
-    GetRoleById(id)
+    GetCardContentById(id)
       .then((res) => {
         setIdData(res.data.data);
+
+
       })
       .catch((err) => {
         console.log(err, "error");
       });
   }, [id]);
+
 
   //update role api implementation
   const onChange = (e) => {
@@ -30,19 +44,17 @@ const EditRole = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("role_id", id);
-    formData.append("name", idData?.name ? idData?.name : "");
-    formData.append(
-      "abbreviation",
-      idData?.abbreviation ? idData?.abbreviation : ""
-    );
+    formData.append("content_id", data?.id);
+    formData.append("card_content", idData?.card_content ? idData?.card_content : "");
+    formData.append("redirection_url", idData?.redirection_url ? idData?.redirection_url : "");
+   
 
-    UpdateRoles(formData)
+    UpdateCardContent(formData)
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Role edited successfully!");
+          toast.success("Card Content edited successfully!");
         }
-        navigate("/role-list");
+        navigate("/cardContent");
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
@@ -57,39 +69,52 @@ const EditRole = () => {
       });
   };
 
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    // setDescription(data);
+    setIdData((prevData) => ({
+      ...prevData,
+      card_content: data,
+    }));
+  };
+
   const navigate = useNavigate();
-  const navigateToRole = () => {
-    navigate("/role-list");
+  const navigateToSocialList = () => {
+    navigate("/cardContent");
   };
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginBottom: "60px" }}>Edit Role</h3>
+        <h3 style={{ marginBottom: "60px" }}>Edit Card Content</h3>
       </Box>
       <Card>
         <div>
           <Form>
+          <Form.Group className="mb-3">
+                <Form.Label>Card's Content:</Form.Label>
+
+                <CKEditor
+                  editor={ClassicEditor}
+                  onChange={handleEditorChange}
+                  data={data?.card_content}
+                  config={{
+                    height: "1000px",
+                  }}
+                />
+              </Form.Group>
+
             <Form.Group className="mb-3">
-              <Form.Label>Role Name</Form.Label>
+              <Form.Label>Redirection Url</Form.Label>
               <Form.Control
                 type="text"
-                defaultValue={idData?.name}
-                name="name"
+                defaultValue={data?.redirection_url}
+                name="redirection_url"
                 onChange={(e) => onChange(e)}
-                
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Abbreviation</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue={idData?.abbreviation}
-                name="abbreviation"
-                onChange={(e) => onChange(e)}
-                placeholder="Enter abbreviation"
-              />
-            </Form.Group>
+            
+            
           </Form>
           <div className="button">
             <Button
@@ -110,7 +135,7 @@ const EditRole = () => {
               icon="pi pi-times"
               severity="secondary"
               onClick={(e) => {
-                navigateToRole();
+                navigateToSocialList();
               }}
               style={{ borderRadius: "10px", marginLeft: "10px" }}
             >
@@ -123,4 +148,5 @@ const EditRole = () => {
   );
 };
 
-export default EditRole;
+export default EditCardContent;
+

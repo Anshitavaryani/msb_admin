@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ChangeAdminPassword } from "../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Card } from "primereact/card";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -17,6 +18,11 @@ const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -57,7 +63,6 @@ const ChangePassword = () => {
     formData.append("old_password", oldPassword);
     formData.append("new_password", newPassword);
     formData.append("confirm_password", confirmPassword);
-    console.log("formdata====>", formData);
 
     try {
       const res = await ChangeAdminPassword(formData);
@@ -118,22 +123,34 @@ const ChangePassword = () => {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3" style={{ position: "relative" }}>
             <Form.Label>New Password</Form.Label>
+            <div
+              className="new-password-toggle-icon"
+              onClick={handleTogglePassword}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </div>
             <Form.Control
-              type="password"
-              placeholder=" New Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter New Password"
               onChange={(event) => {
                 setNewPassword(event.target.value);
               }}
             />
           </Form.Group>
 
-          <Form.Group className="mb-4">
+          <Form.Group className="mb-4" style={{ position: "relative" }}>
             <Form.Label>Confirm Password</Form.Label>
+            <div
+              className="confirm-password-toggle-icon"
+              onClick={handleTogglePassword}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </div>
             <Form.Control
-              type="password"
-              placeholder="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Confirm Password"
               onChange={(event) => {
                 setConfirmPassword(event.target.value);
               }}

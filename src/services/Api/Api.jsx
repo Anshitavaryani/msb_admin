@@ -3,12 +3,11 @@ import { BASE_URL } from "../Host";
 
 //admin login
 export const AdminLogin = async (data) => {
-  // console.log("loginnnn==>", AdminLogin);
   let config = {
     email: data?.email,
     password: data?.password,
   };
-  console.log("loginnnn==>", BASE_URL + "admin/login");
+
   return await axios.post(BASE_URL + "admin/login", config);
 };
 
@@ -52,7 +51,6 @@ export const DeleteUser = async (user_id, adminToken) => {
     },
   });
 };
-
 
 //get all roles
 export const GetAllRoles = async () => {
@@ -140,6 +138,8 @@ export const DeleteCategory = async (category_id, adminToken) => {
   });
 };
 
+// *****************************************BLOG API***********************************************************
+
 export const GetAllBlogs = async () => {
   const res = await axios.get(BASE_URL + "blog/getAllBlogs");
   return res;
@@ -179,6 +179,34 @@ export const DeleteBlog = async (blog_id, adminToken) => {
   });
 };
 
+//get comments by blog Id
+export const GetCommentsByBlogId = async (blog_id) => {
+  return await axios.get(
+    BASE_URL + "blog/getCommentsByBlogId?blog_id=" + blog_id
+  );
+};
+
+//delete comment
+export const DeleteCommentByBlogId = async (comment_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("comment_id", comment_id);
+  return axios.delete(BASE_URL + "blog/deleteCommentByAdmin", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
+};
+
+//get likes users
+export const GetlikesByBlogId = async (blog_id) => {
+  return await axios.get(
+    BASE_URL + "blog/getAllLikesByBlogId?blog_id=" + blog_id
+  );
+};
+
+// ********************************ADMIN API***********************************************************
 export const ChangeAdminPassword = async (data) => {
   return axios.post(BASE_URL + "admin/change-password", data, {
     headers: {
@@ -220,7 +248,7 @@ export const DeleteAdmin = async (admin_id, adminToken) => {
 
 export const GetAdminProfile = async () => {
   const token = await localStorage.getItem("adminToken");
-  console.log("token-=========>", token);
+
   return await axios.get(BASE_URL + "admin/getAdminProfile", {
     headers: {
       "x-access-token": `${token}`,
@@ -247,7 +275,7 @@ export const ChangePaymentStatus = async ({ user_id, payment_status }) => {
 };
 
 export const GetUserCount = async () => {
-  const res = await axios.get(BASE_URL + "admin/getCount");
+  const res = await axios.get(BASE_URL + "admin/getUserCount");
   return res;
 };
 
@@ -264,4 +292,197 @@ export const GetCategoryCount = async () => {
 export const GetUserCountByMonth = async () => {
   const res = await axios.get(BASE_URL + "admin/getUserCountByMonth");
   return res;
+};
+
+export const GetMostLiked = async () => {
+  const res = await axios.get(BASE_URL + "admin/getMostLikedStory");
+  return res;
+};
+
+export const GetMostViewed = async () => {
+  const res = await axios.get(BASE_URL + "admin/getMostViewedStory");
+  return res;
+};
+
+export const GetLoginLogs = async () => {
+  const res = await axios.get(BASE_URL + "admin/getLoginLogs");
+  return res;
+};
+
+// ********************************Social APIs*********************************************************
+
+//get all social login
+export const GetAllSocialLogin = async () => {
+  const res = await axios.get(BASE_URL + "content/getAllSocialLogin");
+  return res;
+};
+
+//get social login by id
+export const GetSocialLoginById = async (id) => {
+  return await axios.get(BASE_URL + "content/findSocialLoginById?id=" + id);
+};
+
+//create social login
+export const CreateSocialLogin = async (formData) => {
+  return await axios.post(BASE_URL + "content/createSocialLogin", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+//update social
+export const UpdateSocialLogin = async (formData) => {
+  return await axios.put(BASE_URL + "content/updateSocialLogin", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+//delete social
+export const DeleteSocialLogin = async (content_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("content_id", content_id);
+  return axios.delete(BASE_URL + "content/deleteSocialLogin", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
+};
+
+//*************************************************Section content api******************************************************** */
+
+
+export const GetAllSectionContent = async () => {
+  const res = await axios.get(BASE_URL + "content/getAllSectionContent");
+  return res;
+};
+
+export const GetSectionContentById = async (id) => {
+  return await axios.get(BASE_URL + "content/findSectionContentById?id=" + id);
+};
+
+export const CreateSectionContent = async (formData) => {
+  return await axios.post(BASE_URL + "content/createSectionContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const UpdateSectionContent = async (formData) => {
+  return await axios.put(BASE_URL + "content/updateSectionContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const DeleteSectionContent = async (content_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("content_id", content_id);
+  return axios.delete(BASE_URL + "content/deleteSectionContent", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
+};
+
+
+//*************************************************Banner content api******************************************************** */
+
+
+
+export const GetAllBannerContent = async () => {
+  const res = await axios.get(BASE_URL + "content/getAllBannerContent");
+  return res;
+};
+
+export const GetBannerContentById = async (id) => {
+  return await axios.get(BASE_URL + "content/findBannerContentById?id=" + id);
+};
+
+export const CreateBannerContent = async (formData) => {
+  return await axios.post(BASE_URL + "content/createBannerContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const UpdateBannerContent = async (formData) => {
+  return await axios.put(BASE_URL + "content/updateBannerContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const DeleteBannerContent = async (content_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("content_id", content_id);
+  return axios.delete(BASE_URL + "content/deleteBannerContent", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
+};
+
+//*************************************************Card content api******************************************************** */
+
+
+export const GetAllCardContent = async () => {
+  const res = await axios.get(BASE_URL + "content/getAllCardContent");
+  return res;
+};
+
+//get social login by id
+export const GetCardContentById = async (id) => {
+  return await axios.get(BASE_URL + "content/findCardContentById?id=" + id);
+};
+
+//create social login
+export const CreateCardContent = async (formData) => {
+  return await axios.post(BASE_URL + "content/createCardContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+//update social
+export const UpdateCardContent = async (formData) => {
+  return await axios.put(BASE_URL + "content/updateCardContent", formData, {
+    headers: {
+      "x-access-token": `${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+//delete social
+export const DeleteCardContent = async (content_id, adminToken) => {
+  const formData = new FormData();
+  formData.append("content_id", content_id);
+  return axios.delete(BASE_URL + "content/deleteCardContent", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-access-token": adminToken,
+    },
+  });
 };

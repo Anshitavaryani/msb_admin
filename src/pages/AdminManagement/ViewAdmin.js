@@ -16,7 +16,6 @@ const ViewAdmin = () => {
     GetAdminProfile(id)
       .then((res) => {
         setIdData(res.data.data);
-        console.log("rolebyid", res.data.data.admin_roles.name);
       })
       .catch((err) => {
         console.log(err, "error");

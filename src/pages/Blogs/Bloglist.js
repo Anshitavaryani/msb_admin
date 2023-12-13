@@ -50,10 +50,10 @@ const Categorylist = () => {
       ) {
         finalData.push(backupData[item]);
       }
-      console.log("items=====>", backupData[item]);
+  
     }
     setRoleData(finalData);
-    console.log("finalData=====>", finalData);
+
   };
 
   //Code to get dynamic height
@@ -136,7 +136,7 @@ const Categorylist = () => {
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
+      // flex: 1,
     },
     {
       field: "type",
@@ -147,15 +147,24 @@ const Categorylist = () => {
       flex: 1,
     },
     {
-      field: "category",
-      headerName: "Category",
-      width: 350,
+      field: "views_count",
+      headerName: "Views Count",
+      width: 250,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
-      valueGetter: (params) =>
-        params.row.Categories.map((category) => category.title).join(", "),
     },
+  
+    // {
+    //   field: "category",
+    //   headerName: "Category",
+    //   width: 350,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   flex: 1,
+    //   valueGetter: (params) =>
+    //     params.row.Categories.map((category) => category.title).join(", "),
+    // },
 
     {
       field: "action",

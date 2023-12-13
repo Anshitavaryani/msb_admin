@@ -1,42 +1,41 @@
 import { Box } from "@mui/material";
 import React, { useLayoutEffect, useState } from "react";
 import { Form } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
-import { GetCategoryById, UpdateCategory } from "../../services/Api/Api.jsx";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  GetCardContentById,
+  UpdateBannerContent,
+} from "../../../services/Api/Api";
+import { BASE_URL_IMAGE } from "../../../services/Host";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { BASE_URL_IMAGE } from "../../services/Host";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-const EditCategory = () => {
+const EditBannerContent = () => {
+  const location = useLocation();
+
+  const { data } = location.state;
+  console.log("cardadta==>", data, data.id);
   const { id } = useParams();
-  const [idData, setIdData] = React.useState({});
-  const [checkImage, setCheckImage] = React.useState(null);
   const [image, setImage] = useState({ preview: "", raw: "" });
+  const [idData, setIdData] = useState({
+    card_content: data?.card_content || "",
+    images: data?.file_name || "",
+  });
 
   //get role By ID
   useLayoutEffect(() => {
-    GetCategoryById(id)
+    GetCardContentById(id)
       .then((res) => {
         setIdData(res.data.data);
-        setCheckImage(res.data.data.file_name);
-
       })
       .catch((err) => {
         console.log(err, "error");
       });
   }, [id]);
 
-  const handleImageChange = (e) => {
-
-    if (e.target.files.length) {
-      setImage({
-        preview: URL.createObjectURL(e.target.files[0]),
-        raw: e.target.files[0],
-      });
-    }
-    setIdData({ ...idData, image: e.target.files[0] });
-  };
   //update role api implementation
   const onChange = (e) => {
     setIdData({ ...idData, [e.target.name]: e.target.value });
@@ -45,18 +44,21 @@ const EditCategory = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("category_id", id);
-    formData.append("title", idData?.title ? idData?.title : "");
-    if (idData.image) {
-      formData.append("images", idData.image);
+    formData.append("content_id", data?.id);
+    formData.append(
+      "banner_content",
+      idData?.banner_content ? idData?.banner_content : ""
+    );
+    if (idData.images) {
+      formData.append("images", idData.images);
     }
 
-    UpdateCategory(formData)
+    UpdateBannerContent(formData)
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Category edited successfully!");
+          toast.success("Bnaner Content edited successfully!");
         }
-        navigate("/category");
+        navigate("/bannerContent");
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
@@ -71,28 +73,51 @@ const EditCategory = () => {
       });
   };
 
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    // setDescription(data);
+    setIdData((prevData) => ({
+      ...prevData,
+      banner_content: data,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files.length) {
+      setImage({
+        preview: URL.createObjectURL(e.target.files[0]),
+        raw: e.target.files[0],
+      });
+    }
+    setIdData({ ...idData, images: e.target.files[0] });
+  };
+  
+
   const navigate = useNavigate();
-  const navigateToRole = () => {
-    navigate("/category");
+  const navigateToSocialList = () => {
+    navigate("/bannerContent");
   };
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginBottom: "60px" }}>Edit Category</h3>
+        <h3 style={{ marginBottom: "60px" }}>Edit Banner Content</h3>
       </Box>
       <Card>
         <div>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue={idData?.title}
-                name="title"
-                onChange={(e) => onChange(e)}
-                placeholder="Enter title"
+              <Form.Label>Banner's Content:</Form.Label>
+
+              <CKEditor
+                editor={ClassicEditor}
+                onChange={handleEditorChange}
+                data={data?.banner_content}
+                config={{
+                  height: "1000px",
+                }}
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Image:</Form.Label>
 
@@ -101,12 +126,12 @@ const EditCategory = () => {
                 name="image"
                 onChange={(e) => handleImageChange(e)}
               />
-              {idData ? (
+              {data ? (
                 <>
                   {image.preview === "" ? (
                     <img
-                      src={`${BASE_URL_IMAGE}${idData.file_name}`}
-                      alt="Categroy Icon"
+                      src={`${BASE_URL_IMAGE}${data.file_name}`}
+                      alt="Banner"
                       style={{
                         height: "100px",
                         width: "100px",
@@ -151,7 +176,7 @@ const EditCategory = () => {
               icon="pi pi-times"
               severity="secondary"
               onClick={(e) => {
-                navigateToRole();
+                navigateToSocialList();
               }}
               style={{ borderRadius: "10px", marginLeft: "10px" }}
             >
@@ -164,4 +189,4 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default EditBannerContent;

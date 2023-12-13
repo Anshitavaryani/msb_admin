@@ -3,9 +3,9 @@ import { Form } from "react-bootstrap";
 import { AdminLogin } from "../services/Api/Api";
 import "./Login.scss";
 import { Button } from "primereact/button";
-import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +14,11 @@ const Login = () => {
     password: "",
   });
   const { email, password } = formData;
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,8 +31,7 @@ const Login = () => {
       let result = await AdminLogin(formData);
 
       if (result.status === 200) {
-        localStorage.setItem("adminToken", result?.data?.data?.token);
-        toast.success(" Logged In !", {
+        toast.success("Logged In!", {
           position: "top-right",
           autoClose: 500,
           hideProgressBar: false,
@@ -37,26 +41,54 @@ const Login = () => {
           progress: undefined,
           theme: "light",
         });
+        localStorage.setItem("adminToken", result?.data?.data?.token);
         setTimeout(() => {
           navigate("/");
         }, 1000);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message, {
-        position: "top-right",
-        autoClose: 500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      console.error("Error in onSubmit:", error);
+
+      if (error.response && error.response.status === 401) {
+        toast.error("Invalid Password!", {
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.response && error.response.status === 404) {
+        toast.error("Email Doesn't exist", {
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        toast.error("Please Enter Required Fields", {
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
   }
 
   return (
     <div className="LoginContainer">
+      <ToastContainer />
       <div className="Login">
         <div className="Login_Container">
           <h1 style={{ marginBottom: "30px", marginTop: "30px" }}>
@@ -73,14 +105,20 @@ const Login = () => {
               placeholder="Enter email"
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
+          <Form.Group className="mb-3" style={{ position: "relative" }}>
+            <Form.Label >Password</Form.Label>
+            <div
+              className="password-toggle-icon"
+              onClick={handleTogglePassword}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </div>
             <Form.Control
               name="password"
-              // value={password}
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+
               onChange={(e) => onChange(e)}
-              type="password"
-              placeholder="Password"
             />
           </Form.Group>
           <div style={{ marginLeft: "100px" }}>
@@ -92,7 +130,7 @@ const Login = () => {
               style={{
                 borderRadius: "10px",
                 marginTop: "10px",
-                marginBottom:"10px",
+                marginBottom: "10px",
                 height: "40px",
                 width: "80%",
                 // backgroundColor: "#8f001e",

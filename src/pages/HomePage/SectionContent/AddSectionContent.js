@@ -3,49 +3,36 @@ import React from "react";
 import { useState } from "react";
 import { Button } from "primereact/button";
 import Form from "react-bootstrap/Form";
-import { CreateCategory } from "../../services/Api/Api";
+import { CreateSectionContent } from "../../../services/Api/Api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card } from "primereact/card";
 import CloseIcon from "@mui/icons-material/Close";
 import imageCompression from "browser-image-compression";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-const AddCategory = () => {
-  const [title, setTitle] = useState("");
+const AddSectionContent = () => {
+  const [sectionContent, setSectionContent] = useState("");
+  const [redirectionUrl, setRedirectionUrl] = useState("");
+  const [videos, setVideos] = useState(null);
   const [images, setImages] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [disable, setDisable] = useState(false)
+  const [disable, setDisable] = useState(false);
   const navigate = useNavigate();
-
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (file) {
-  //     const reader = new FileReader();
-
-  //     reader.onloadend = () => {
-  //       // Set the image preview
-  //       setImagePreview(reader.result);
-  //       setImages(e.target.files[0]);
-  //     };
-
-  //     // Read the image as a data URL
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-  
+
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/jpg"]; // Add more allowed types if needed
-  
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"]; // Add more allowed types if needed
+
       if (!allowedTypes.includes(file.type)) {
         console.error("Error: Invalid file type. Images (JPEG, JPG) only!");
         return;
       }
-  
+
       if (file.size <= 1024 * 1024) {
         // If image size is less than or equal to 1 MB, no need to compress
         setImages(file);
@@ -61,7 +48,7 @@ const AddCategory = () => {
             maxSizeMB: 1,
             maxWidthOrHeight: 1920,
           });
-  
+
           // Check if compression actually reduced the size
           if (compressedFile.size < file.size) {
             const reader = new FileReader();
@@ -86,45 +73,66 @@ const AddCategory = () => {
     }
   };
 
+ 
+
+  const handleVideoChange = (event) => {
+    const file = event.target.files[0];
+    console.log("video",file)
+
+    // Check if a file is selected
+    if (file) {
+      // You can perform additional checks here, such as file type validation
+      // For example, check if the file type is a video
+      if (file.type.startsWith('video/')) {
+        setVideos(file);
+      } else {
+        alert('Please select a valid video file.');
+      }
+    }
+  };
+
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    setSectionContent(data);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setDisable(true)
+    setDisable(true);
 
-    if (!title) {
-      toast.error("Please enter name");
+    if (!sectionContent) {
+      setDisable(false);
+      toast.error("Please enter Section Content");
       return;
     }
-    if (!images) {
-      toast.error("Please enter Image");
+    if (!redirectionUrl) {
+      setDisable(false);
+      toast.error("Please enter Link");
       return;
     }
+    // if (!images) {
+    //   setDisable(false);
+    //   toast.error("Please enter Image");
+    //   return;
+    // }
 
     try {
       const formData = new FormData();
-      formData.append("title", title);
+      formData.append("section_content", sectionContent);
+      formData.append("redirection_url", redirectionUrl);
       formData.append("images", images);
+      formData.append("videos", videos);
 
-      const response = await CreateCategory(formData);
+      const response = await CreateSectionContent(formData);
 
       if (response.status === 200) {
-        toast.success("Category added successfully");
-        navigate("/category");
+        toast.success("Social Media added successfully");
+        navigate("/sectionContent");
       }
-      setDisable(false)
+      setDisable(false);
     } catch (error) {
       if (error.response) {
-        if (error.response.status === 400) {
-          toast.error("Category with this name already exists", {
-            position: "top-right",
-            autoClose: 500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        } else if (error.response.status === 401) {
+        if (error.response.status === 401) {
           toast.error("Token expired");
           localStorage.removeItem("adminToken");
           setTimeout(() => {
@@ -136,7 +144,7 @@ const AddCategory = () => {
       } else {
         toast.error("Network error");
       }
-      setDisable(false)
+      setDisable(false);
     }
   };
 
@@ -153,25 +161,51 @@ const AddCategory = () => {
   };
 
   const navigateToRole = () => {
-    navigate("/category");
+    navigate("/sectionContent");
   };
 
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3 style={{ marginBottom: "50px" }}>Create New Category</h3>
+        <h3 style={{ marginBottom: "50px" }}>Create A New Section Content</h3>
       </Box>
       <Card>
         <div>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label> Category name:</Form.Label>
+              <Form.Label>Section Content:</Form.Label>
+
+              <CKEditor
+                editor={ClassicEditor}
+                onChange={handleEditorChange}
+                config={{
+                  height: "1000px",
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label> Redirection Url:</Form.Label>
               <Form.Control
                 type="text"
                 required
-                placeholder="Enter Category name"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter Redirection Url"
+                value={redirectionUrl}
+                onChange={(e) => setRedirectionUrl(e.target.value)}
+                className="new_form_control"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Video Link:</Form.Label>
+              <Form.Control
+                type="file"
+                required
+                placeholder="Insert Video Link"
+                accept="video/*"
+                id="videoInput"
+                onChange={handleVideoChange}
+                // onChange={(e) => {setVideos(e.target.value);
+                // console.log("videos",e.target.value)}}
                 className="new_form_control"
               />
             </Form.Group>
@@ -227,7 +261,7 @@ const AddCategory = () => {
                   // width:"10px"
                 }}
               >
-                {disable? "Saving...." : "Save"}
+                {disable ? "Saving...." : "Save"}
               </Button>
 
               <Button
@@ -248,4 +282,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default AddSectionContent;

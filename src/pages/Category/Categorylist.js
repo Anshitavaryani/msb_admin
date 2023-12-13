@@ -3,11 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
-import {
-  GetAllCategory,
-  DeleteRole,
-  DeleteCategory,
-} from "../../services/Api/Api";
+import { GetAllCategory, DeleteCategory } from "../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 
@@ -55,7 +51,6 @@ const Categorylist = () => {
     }
   }, [pageSize]);
 
-
   const onSearch = (e) => {
     const backupData = [...menteeDataBackup];
     const finalData = [];
@@ -70,10 +65,8 @@ const Categorylist = () => {
       ) {
         finalData.push(backupData[item]);
       }
-      console.log("items=====>", backupData[item]);
     }
     setRoleData(finalData);
-    console.log("finalData=====>", finalData);
   };
 
   //delete category
@@ -165,7 +158,7 @@ const Categorylist = () => {
       cellClassName: "custom-cell",
       sortable: false,
       renderCell: (cellValues) => {
-        const attachment = cellValues.row; 
+        const attachment = cellValues.row;
         const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
 
         if (imageUrl) {
@@ -222,7 +215,7 @@ const Categorylist = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h3>Category List</h3>
         <Box>
-        <span className="p-input-icon-left">
+          <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
               type="search"

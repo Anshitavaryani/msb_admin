@@ -1,17 +1,22 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-
-import { useNavigate } from "react-router-dom";
-import { GetAdmins, DeleteAdmin } from "../../services/Api/Api";
+import { InputText } from "primereact/inputtext";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  GetCommentsByBlogId,
+  DeleteCommentByBlogId,
+} from "../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 
-const AdminUser = () => {
+const CommentList = () => {
+  const { blog_id } = useParams();
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(50);
   const [dataGridHeight, setDataGridHeight] = useState("550px");
   const [roleData, setRoleData] = useState([]);
+  const [menteeDataBackup, setMenteeDataBackup] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
@@ -22,47 +27,62 @@ const AdminUser = () => {
   };
 
   //get all specialist
+  // ...
+
+  //get all specialist
   const getData = async () => {
     try {
-      let result = await GetAdmins(localStorage.getItem("adminToken"));
-      setRoleData(result.data.data);
+      // Pass the blog_id to the API function
+      let result = await GetCommentsByBlogId(
+        blog_id,
+        localStorage.getItem("adminToken")
+      );
+      setRoleData(result.data.data.rows);
+      setMenteeDataBackup(result.data.data.rows);
     } catch (e) {
       console.log(e);
     }
   };
+
   useEffect(() => {
     getData();
-  }, []);
+  }, [blog_id]);
 
-  //Code to get dynamic height
-  useEffect(() => {
-    // Update dataGridHeight based on the pageSize value
-    if (pageSize === 50) {
-      setDataGridHeight("550px");
-    } else if (pageSize === 75) {
-      setDataGridHeight("700px");
-    } else if (pageSize === 100) {
-      setDataGridHeight("850px");
-    } else {
-      // Set a default height if pageSize is not 10 or 15
-      setDataGridHeight("550px");
+  const onSearch = (e) => {
+    const backupData = [...menteeDataBackup];
+    const finalData = [];
+    for (let item in backupData) {
+      if (
+        backupData[item].comment?.toLowerCase()?.includes(e?.toLowerCase()) ||
+        backupData[item].commented_by?.name?.toLowerCase()?.includes(e?.toLowerCase()) ||
+        backupData[item].id
+          .toString()
+          ?.toLowerCase()
+          ?.includes(e?.toLowerCase())
+      ) {
+        finalData.push(backupData[item]);
+      }
+
     }
-  }, [pageSize]);
+    // setMenteeDataBackup(finalData);
+    setRoleData(finalData)
 
-  //delete role
-  const removeAdmin = async (e, admin_id) => {
+  };
+
+  //delete category
+  const removeComment = async (e, comment_id) => {
     const confirmed = window.confirm(
-      "Do you really want to delete this admin?"
+      "Do you really want to delete this Comment?"
     );
     if (!confirmed) return;
 
     try {
-      const result = await DeleteAdmin(
-        admin_id,
+      const result = await DeleteCommentByBlogId(
+        comment_id,
         localStorage.getItem("adminToken")
       );
 
-      toast.success("Role deleted successfully!", {
+      toast.success("Comment deleted successfully!", {
         position: "top-right",
         autoClose: 500,
         hideProgressBar: false,
@@ -72,12 +92,11 @@ const AdminUser = () => {
         progress: undefined,
         theme: "light",
       });
-      window.location.reload(true);
       setTimeout(() => {
-        navigate("/adminList");
+        navigate(`/commentList/${blog_id}`);
       }, 3000);
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error.response.status === 401) {
         toast.error("Token expired", {
           position: "top-right",
           autoClose: 500,
@@ -96,39 +115,25 @@ const AdminUser = () => {
     }
   };
 
-  const navigateToAddAdmin = () => {
-    navigate("/addAdmin");
-  };
-  const navigateToEditAdmin = (event, id) => {
-    navigate(`/editAdmin/${id}`);
-  };
-
   const columns = [
     { field: "id", headerName: "ID", width: 150 },
     {
-      field: "name",
-      headerName: "Name",
+      field: "User Name",
+      headerName: "User Name",
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
+      valueGetter: (params) => params.row.commented_by?.name || "",
     },
     {
-      field: "email_id",
-      headerName: "Email",
-      width: 350,
+      field: "comment",
+      headerName: "Comment",
+      width: 250,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
-    },
-    {
-      field: "role",
-      headerName: "Role",
-      width: 350,
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      flex: 1,
-      valueGetter: (params) => params.row.admin_roles?.name || "",
+      // valueGetter: (params) => params.row.comment || "",
     },
 
     {
@@ -142,19 +147,11 @@ const AdminUser = () => {
         return (
           <div>
             <Button
-              icon="pi pi-pencil"
-              rounded
-              outlined
-              className="mr-2"
-              style={{ margin: "0px 10px" }}
-              onClick={(event) => navigateToEditAdmin(event, cellValues.id)}
-            />
-            <Button
               icon="pi pi-trash"
               rounded
               outlined
               severity="danger"
-              onClick={(e) => removeAdmin(e, cellValues.id)}
+              onClick={(e) => removeComment(e, cellValues.id)}
             />
           </div>
         );
@@ -165,15 +162,19 @@ const AdminUser = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3>Admin List</h3>
+        <h3>Comment's List</h3>
         <Box>
-          <Button
-            label=" Add New Admin"
-            icon="pi pi-plus"
-            severity="success"
-            onClick={navigateToAddAdmin}
-            style={{ margin: "0px 10px" }}
-          />
+          <span className="p-input-icon-left">
+            <i className="pi pi-search" />
+            <InputText
+              type="search"
+              // onInput={(e) => setGlobalFilter(e.target.value)}
+              onChange={(e) => {
+                onSearch(e.target.value);
+              }}
+              placeholder="Search..."
+            />
+          </span>
         </Box>
       </Box>
       <div
@@ -205,4 +206,4 @@ const AdminUser = () => {
   );
 };
 
-export default AdminUser;
+export default CommentList;

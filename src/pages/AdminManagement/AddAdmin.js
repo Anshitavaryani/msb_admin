@@ -22,7 +22,6 @@ const AddAdmin = () => {
 
     if (res?.status === 200) {
       setRoleList(res?.data?.data);
-      console.log("roles", res?.data?.data);
     } else {
     }
   };

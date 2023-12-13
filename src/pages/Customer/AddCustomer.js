@@ -13,10 +13,12 @@ const AddCustomer = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
+  const [disable, setDisable] = useState(false)
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setDisable(true)
 
     if (!name) {
       toast.error("Please enter name ");
@@ -44,10 +46,20 @@ const AddCustomer = () => {
       setTimeout(() => {
         navigate("/customers");
       }, 1000);
+      setDisable(false)
     } catch (error) {
-      if (error.response && error.response.status === 500) {
-        toast.error("Email already exists");
-      } else if (error.response.status == 401) {
+      if (error.response && error.response.status === 400) {
+        toast.error("Email already exists",{
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if (error.response.status === 401) {
         toast.error("Token expired");
         localStorage.removeItem("adminToken");
         setTimeout(() => {
@@ -56,6 +68,7 @@ const AddCustomer = () => {
       } else {
         toast.error("Something went wrong");
       }
+      setDisable(false)
     }
   };
 
@@ -115,6 +128,7 @@ const AddCustomer = () => {
                 severity="success"
                 type="submit"
                 onClick={handleSubmit}
+                disabled={disable}
                 style={{
                   borderRadius: "10px",
                   marginLeft: "10px",
@@ -122,7 +136,7 @@ const AddCustomer = () => {
                   // width:"10px"
                 }}
               >
-                Save
+                {disable? "Saving...." : "Save"}
               </Button>
 
               <Button
