@@ -97,7 +97,7 @@ const SocialLogins = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 50 },
+    { field: "id", headerName: "ID", width: 150 },
     {
       field: "social_media_name",
       headerName: "Media Name",
@@ -113,38 +113,38 @@ const SocialLogins = () => {
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
+      // flex: 1,
     },
 
-    {
-      field: "image",
-      headerName: "Icon",
-      width: 150,
-      flex: 1,
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      sortable: false,
-      renderCell: (cellValues) => {
-        const attachment = cellValues.row;
-        const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
+    // {
+    //   field: "image",
+    //   headerName: "Icon",
+    //   width: 150,
+    //   flex: 1,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   sortable: false,
+    //   renderCell: (cellValues) => {
+    //     const attachment = cellValues.row;
+    //     const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
 
-        if (imageUrl) {
-          return (
-            <div>
-              <img
-                src={imageUrl}
-                alt="Category Icon"
-                className="category-icon-preview_in_list"
-                style={{ width: "100px", height: "60px" }}
-              />
-            </div>
-          );
-        } else {
-          // Handle the case where there are no attachments for the user
-          return <div>No Image Available</div>;
-        }
-      },
-    },
+    //     if (imageUrl) {
+    //       return (
+    //         <div>
+    //           <img
+    //             src={imageUrl}
+    //             alt="Category Icon"
+    //             className="category-icon-preview_in_list"
+    //             style={{ width: "100px", height: "60px" }}
+    //           />
+    //         </div>
+    //       );
+    //     } else {
+    //       // Handle the case where there are no attachments for the user
+    //       return <div>No Image Available</div>;
+    //     }
+    //   },
+    // },
 
     {
       field: "action",
@@ -180,7 +180,7 @@ const SocialLogins = () => {
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h3>Social Media List</h3>
-        <Box>
+        {/* <Box>
           <Button
             label=" Add New Social Media"
             icon="pi pi-plus"
@@ -188,7 +188,7 @@ const SocialLogins = () => {
             onClick={navigateToAddSocialLogin}
             style={{ margin: "0px 10px" }}
           />
-        </Box>
+        </Box> */}
       </Box>
       <div
         style={{

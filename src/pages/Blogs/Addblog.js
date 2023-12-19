@@ -22,22 +22,6 @@ const Addblog = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [disable, setDisable] = useState(false);
 
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (file) {
-  //     const reader = new FileReader();
-
-  //     reader.onloadend = () => {
-  //       // Set the image preview
-  //       setImagePreview(reader.result);
-  //       setImages(e.target.files[0]);
-  //     };
-
-  //     // Read the image as a data URL
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -90,9 +74,6 @@ const Addblog = () => {
     }
   };
   
-  
-  
-
   //get category name
   const getCategoryList = async () => {
     // Write your code here

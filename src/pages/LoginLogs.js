@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,20 @@ import { GetLoginLogs } from "../services/Api/Api";
 import { InputText } from "primereact/inputtext";
 import moment from "moment";
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 const LoginLogs = () => {
   const [pageSize, setPageSize] = useState(50);
   const [dataGridHeight, setDataGridHeight] = useState("550px");
@@ -14,9 +28,16 @@ const LoginLogs = () => {
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
-  const [globalFilter, setGlobalFilter] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const navigate = useNavigate();
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  const handleYearChange = (event) => {
+    setSelectedYear(event.target.value);
+  };
 
   const handleClick = (event, value) => {
     setUserIdToNavigate(value);
@@ -26,16 +47,24 @@ const LoginLogs = () => {
   //get all user
   const getData = async () => {
     try {
-      let result = await GetLoginLogs(localStorage.getItem("adminToken"));
-      setUserData(result.data.data);
-      setMenteeDataBackup(result.data.data);
+      let result = await GetLoginLogs({
+        month: selectedMonth,
+        year: selectedYear,
+      });
+      const loginCountData = result?.data?.data;
+
+      setUserData(loginCountData || []);
+      setMenteeDataBackup(result?.data?.data)
+      console.log("loginCountData", loginCountData);
     } catch (e) {
       console.log(e);
+      setUserData([]);
     }
   };
+
   useEffect(() => {
     getData();
-  }, []);
+  }, [selectedMonth, selectedYear]);
 
   const onSearch = (e) => {
     const backupData = [...menteeDataBackup];
@@ -43,9 +72,8 @@ const LoginLogs = () => {
     for (let item in backupData) {
       if (
         // backupData[item].email_id?.includes(search) ||
-        backupData[item].token_user?.name
-          ?.toLowerCase()
-          ?.includes(e?.toLowerCase()) ||
+        backupData[item].userName?.toLowerCase()?.includes(e?.toLowerCase()) ||
+        backupData[item].userEmail?.toLowerCase()?.includes(e?.toLowerCase()) ||
         backupData[item].id
           .toString()
           ?.toLowerCase()
@@ -66,25 +94,40 @@ const LoginLogs = () => {
       cellClassName: "custom-cell",
     },
     {
-      field: "name",
+      field: "userName",
       headerName: " User's Name",
       width: 150,
       flex: 1,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      valueGetter: (params) => params.row.token_user?.name || "",
     },
-
     {
-      field: "created_at",
-      headerName: "Login Timing",
-      width: 450,
+      field: "userEmail",
+      headerName: "Email Address",
+      width: 150,
+      flex: 1,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
-      valueFormatter: (params) =>
-        moment(params?.value).format("DD/MM/YYYY hh:mm A"),
     },
+    {
+      field: "logincount",
+      headerName: "Login Count",
+      width: 150,
+      flex: 1,
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+    },
+
+    // {
+    //   field: "created_at",
+    //   headerName: "Login Timing",
+    //   width: 450,
+    //   headerClassName: "custom-header",
+    //   cellClassName: "custom-cell",
+    //   flex: 1,
+    //   valueFormatter: (params) =>
+    //     moment(params?.value).format("DD/MM/YYYY hh:mm A"),
+    // },
     // {
     //     field: "updated_at",
     //     headerName: "Logout Timing",
@@ -101,9 +144,9 @@ const LoginLogs = () => {
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
         {/* <Header title="USER MANAGEMENT" subtitle="Create Category" /> */}
-        <h3> User Login Activity</h3>
+        <h3> User Login Activity:</h3>
         <Box>
-          <span className="p-input-icon-left">
+          <span className="p-input-icon-left" style={{ marginRight: "20px" }}>
             <i className="pi pi-search" />
             <InputText
               type="search"
@@ -114,6 +157,32 @@ const LoginLogs = () => {
               placeholder="Search..."
             />
           </span>
+
+          <FormControl>
+            <InputLabel style={{ marginTop: "-10px" }}>Month</InputLabel>
+            <Select value={selectedMonth} onChange={handleMonthChange}>
+              {/* Populate dropdown with month numbers */}
+              {Array.from({ length: 12 }, (_, index) => (
+                <MenuItem key={index + 1} value={index + 1}>
+                  {MONTHS[index]}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl style={{ marginLeft: "20px" }}>
+            <InputLabel style={{ marginTop: "-10px" }}>Year</InputLabel>
+            <Select value={selectedYear} onChange={handleYearChange}>
+              {/* Populate dropdown with years, you can adjust the range as needed */}
+              {Array.from(
+                { length: 10 },
+                (_, index) => new Date().getFullYear() - index
+              ).map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </Box>
       <div

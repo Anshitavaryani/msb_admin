@@ -304,9 +304,11 @@ export const GetMostViewed = async () => {
   return res;
 };
 
-export const GetLoginLogs = async () => {
-  const res = await axios.get(BASE_URL + "admin/getLoginLogs");
-  return res;
+export const GetLoginLogs = async ({ month, year }) => {
+  const formData = new FormData();
+  formData.append("month", month);
+  formData.append("year", year);
+  return await axios.post(BASE_URL + "admin/getLoginLogsOfUser", formData);
 };
 
 // ********************************Social APIs*********************************************************
@@ -486,3 +488,5 @@ export const DeleteCardContent = async (content_id, adminToken) => {
     },
   });
 };
+
+

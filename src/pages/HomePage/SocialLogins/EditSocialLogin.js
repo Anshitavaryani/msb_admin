@@ -2,7 +2,10 @@ import { Box } from "@mui/material";
 import React, { useLayoutEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { GetSocialLoginById,UpdateSocialLogin } from "../../../services/Api/Api";
+import {
+  GetSocialLoginById,
+  UpdateSocialLogin,
+} from "../../../services/Api/Api";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
@@ -11,32 +14,18 @@ import { BASE_URL_IMAGE } from "../../../services/Host";
 const EditSocialLogin = () => {
   const { id } = useParams();
   const [idData, setIdData] = React.useState({});
-  const [checkImage, setCheckImage] = React.useState(null);
-  const [image, setImage] = useState({ preview: "", raw: "" });
 
   //get role By ID
   useLayoutEffect(() => {
     GetSocialLoginById(id)
       .then((res) => {
         setIdData(res.data.data);
-        setCheckImage(res.data.data.file_name);
-
       })
       .catch((err) => {
         console.log(err, "error");
       });
   }, [id]);
 
-  const handleImageChange = (e) => {
-
-    if (e.target.files.length) {
-      setImage({
-        preview: URL.createObjectURL(e.target.files[0]),
-        raw: e.target.files[0],
-      });
-    }
-    setIdData({ ...idData, image: e.target.files[0] });
-  };
   //update role api implementation
   const onChange = (e) => {
     setIdData({ ...idData, [e.target.name]: e.target.value });
@@ -46,11 +35,14 @@ const EditSocialLogin = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("content_id", id);
-    formData.append("social_media_name", idData?.social_media_name ? idData?.social_media_name : "");
-    formData.append("redirection_url", idData?.redirection_url ? idData?.redirection_url : "");
-    if (idData.image) {
-      formData.append("images", idData.image);
-    }
+    formData.append(
+      "social_media_name",
+      idData?.social_media_name ? idData?.social_media_name : ""
+    );
+    formData.append(
+      "redirection_url",
+      idData?.redirection_url ? idData?.redirection_url : ""
+    );
 
     UpdateSocialLogin(formData)
       .then((res) => {
@@ -104,7 +96,7 @@ const EditSocialLogin = () => {
               />
             </Form.Group>
 
-            
+            {/*             
             <Form.Group className="mb-3">
               <Form.Label>Image:</Form.Label>
 
@@ -142,7 +134,7 @@ const EditSocialLogin = () => {
               ) : (
                 <span>No Image Available</span>
               )}
-            </Form.Group>
+            </Form.Group> */}
           </Form>
           <div className="button">
             <Button
@@ -177,4 +169,3 @@ const EditSocialLogin = () => {
 };
 
 export default EditSocialLogin;
-
