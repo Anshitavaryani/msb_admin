@@ -20,6 +20,8 @@ const Customers = () => {
   const [userIdToNavigate, setUserIdToNavigate] = useState();
   const [globalFilter, setGlobalFilter] = useState(null);
   const [menteeDataBackup, setMenteeDataBackup] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleClick = (event, value) => {
@@ -30,13 +32,22 @@ const Customers = () => {
   //get all user
   const getData = async () => {
     try {
+      setLoading(true);
       let result = await GetUsers(localStorage.getItem("adminToken"));
       setUserData(result.data.data);
       setMenteeDataBackup(result.data.data);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("You do not have access to this page as a sub-admin.");
+      } else {
+        setErrorMessage("Error loading data. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     getData();
   }, []);
@@ -57,7 +68,7 @@ const Customers = () => {
   }, [pageSize]);
 
   const removeUser = async (e, user_id) => {
-    const confirmed = window.confirm("Do you really want to delete this user?");
+    const confirmed = window.confirm("Do you really want to delete this User?");
     if (!confirmed) return;
 
     try {
@@ -121,24 +132,19 @@ const Customers = () => {
       ) {
         finalData.push(backupData[item]);
       }
+      console.log("items=====>", backupData[item]);
     }
     setUserData(finalData);
+    console.log("finalData=====>", finalData);
   };
 
-  const data = [
-    // Your table data here
-    { is_subscribed: true /* other fields */ },
-    { is_subscribed: false /* other fields */ },
-    // ...
-  ];
-
-  const updateStatus = async (user_id, payment_status) => {
+  const updateStatus = async (user_id, user_status) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}admin/updatepaymentStatus`, // Update with your API endpoint
+        `${BASE_URL}admin/updateUserStatus`,
         {
           user_id: user_id,
-          payment_status: payment_status,
+          user_status: user_status,
         },
         {
           headers: {
@@ -147,6 +153,8 @@ const Customers = () => {
         }
       );
       // Handle success
+      console.log(response.data);
+      console.log("User status updated successfully");
       window.location.reload(true);
     } catch (error) {
       // Handle error
@@ -170,35 +178,6 @@ const Customers = () => {
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
     },
-    // {
-    //   field: "image",
-    //   headerName: "Image",
-    //   width: 150,
-    //   flex: 1,
-    //   headerClassName: "custom-header",
-    //   cellClassName: "custom-cell",
-    //   sortable: false,
-    //   renderCell: (cellValues) => {
-    //     const attachments = cellValues.row.attachements;
-    //     if (attachments && attachments.length > 0) {
-    //       const attachment = attachments[0];
-    //       const imageUrl = `https://node.mystorybank.info:4000${attachment.file_uri}/${attachment.file_name}`;
-    //       return (
-    //         <div>
-    //           <img
-    //             src={imageUrl}
-    //             alt="User profile"
-    //             className="category-icon-preview_in_list"
-    //             style={{ width: "100px", height: "60px" }}
-    //           />
-    //         </div>
-    //       );
-    //     } else {
-    //       // Handle the case where there are no attachments for the user
-    //       return <div>No Image Available</div>;
-    //     }
-    //   },
-    // },
     {
       field: "email",
       headerName: "Email",
@@ -207,44 +186,33 @@ const Customers = () => {
       cellClassName: "custom-cell",
       flex: 1,
     },
-    // {
-    //   field: "status",
-    //   headerName: "Status",
-    //   headerClassName: "custom-header",
-    //   cellClassName: "custom-cell",
-    //   width: 150,
-    //   flex: 1,
-    //   renderCell: (cellValues) => {
-    //     const handleStatusChange = async (event) => {
-    //       const newStatus = event.target.value;
-    //       updateStatus(cellValues.row.id, newStatus);
-    //
-    //
-    //     };
+    {
+      field: "status",
+      headerName: "Status",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+      width: 150,
+      flex: 1,
+      renderCell: (cellValues) => {
+        const handleStatusChange = async (event) => {
+          const newStatus = event.target.value;
+          updateStatus(cellValues.row.id, newStatus);
+          console.log(cellValues);
+          console.log("statuss=====>", newStatus); // Use newStatus instead of cellValues.status
+        };
 
-    //     return (
-    //       <Select
-    //         native
-    //         value={cellValues.row.payment_status}
-    //         onChange={handleStatusChange}
-    //       >
-    //         <option value="UNSUBSCRIBED">UNSUBSCRIBED</option>
-    //         <option value="SUBSCRIBED">SUBSCRIBED</option>
-    //       </Select>
-    //     );
-    //   },
-    // },
-    // {
-    //   field: "is_subscribed",
-    //   headerName: "Is Subscribed?",
-    //   width: 250,
-    //   headerClassName: "custom-header",
-    //   cellClassName: "custom-cell",
-    //   flex: 1,
-    //   renderCell: (params) => (
-    //     params.value ? "Yes" : "No"
-    //   ),
-    // },
+        return (
+          <Select
+            native
+            value={cellValues.row.user_status}
+            onChange={handleStatusChange}
+          >
+            <option value="ACTIVATE">ACTIVATE</option>
+            <option value="DEACTIVATE">DEACTIVATE</option>
+          </Select>
+        );
+      },
+    },
     {
       field: "action",
       headerName: "Actions",
@@ -281,55 +249,65 @@ const Customers = () => {
 
   return (
     <Box m="20px">
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        {/* <Header title="USER MANAGEMENT" subtitle="Create Category" /> */}
-        <h3> Manage Customers</h3>
-        <Box>
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              type="search"
-              // onInput={(e) => setGlobalFilter(e.target.value)}
-              onChange={(e) => {
-                onSearch(e.target.value);
+      {loading && <p style={{ fontSize: "16px" }}>Loading...</p>}
+      {errorMessage && (
+        <p style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}>
+          {errorMessage}
+        </p>
+      )}
+
+      {!loading && !errorMessage && (
+        <>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <h3> Manage Customers</h3>
+            <Box>
+              <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  type="search"
+                  onChange={(e) => onSearch(e.target.value)}
+                  placeholder="Search..."
+                />
+              </span>
+              <Button
+                label=" Add New User"
+                icon="pi pi-plus"
+                severity="success"
+                onClick={navigateToAddUser}
+                style={{ margin: "0px 10px" }}
+              />
+            </Box>
+          </Box>
+          <div
+            style={{
+              height: dataGridHeight,
+              width: "100%",
+              marginTop: "20px",
+            }}
+          >
+            <DataGrid
+              rows={userData}
+              columns={columns}
+              pageSize={pageSize}
+              rowHeight={80}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[50, 75, 100]}
+              experimentalFeatures={{ newEditingApi: true }}
+              onSelectionModelChange={(id) => {
+                const selectedIDs = new Set([id]);
+                const selectedRowData = userData.filter((row) =>
+                  selectedIDs.has(row.id.toString())
+                );
+                setUserId(selectedIDs);
               }}
-              placeholder="Search..."
             />
-          </span>
-          <Button
-            label=" Add New User"
-            icon="pi pi-plus"
-            severity="success"
-            onClick={navigateToAddUser}
-            style={{ margin: "0px 10px" }}
-          />
-        </Box>
-      </Box>
-      <div
-        style={{
-          height: dataGridHeight,
-          width: "100%",
-          // marginLeft: "10%",
-          marginTop: "20px",
-        }}
-      >
-        <DataGrid
-          rows={userData}
-          columns={columns}
-          pageSize={pageSize}
-          rowHeight={80}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[50, 75, 100]}
-          experimentalFeatures={{ newEditingApi: true }}
-          onSelectionModelChange={(id) => {
-            const selectedIDs = new Set([id]);
-            const selectedRowData = userData.filter((row) =>
-              selectedIDs.has(row.id.toString())
-            );
-            setUserId(selectedIDs);
-          }}
-        />
-      </div>
+          </div>
+        </>
+      )}
     </Box>
   );
 };

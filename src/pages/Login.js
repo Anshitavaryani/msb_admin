@@ -43,7 +43,7 @@ const Login = () => {
         });
         localStorage.setItem("adminToken", result?.data?.data?.token);
         setTimeout(() => {
-          navigate("/");
+          navigate("/viewAdmin");
         }, 1000);
       }
     } catch (error) {

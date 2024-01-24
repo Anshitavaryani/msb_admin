@@ -39,17 +39,27 @@ const Dashboard = () => {
   const [customerData, setCustomerData] = useState([]);
   const [mostLikedData, setMostLikedData] = useState([]);
   const [mostViewedData, setMostViewedData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   //get customer count
   const getCustomerData = async () => {
     try {
+      setLoading(true);
       const result = await GetUserCount(localStorage.getItem("adminToken"));
       setCustomerData(result.data.data);
-    } catch (e) {
-      console.log(e);
+      console.log("blogdata", result);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("You do not have access to this page as a sub-admin.");
+      } else {
+        setErrorMessage("Error loading data. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
-
   useEffect(() => {
     getCustomerData();
   }, []);
@@ -168,59 +178,67 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20PX",
-        }}
-      >
-        <h3 className="title">Dashboard</h3>
+      {loading && <p style={{ fontSize: "16px" }}>Loading...</p>}
+      {errorMessage && (
+        <p style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}>
+          {errorMessage}
+        </p>
+      )}
+      {!loading && !errorMessage && (
+        <>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20PX",
+            }}
+          >
+            <h3 className="title">Dashboard</h3>
 
-        <Button
-          label="Click To View Login Logs"
-          icon="pi pi-arrow-up-right"
-          iconPos="right"
-          rounded
-          outlined
-          aria-label="Filter"
-          onClick={navigateToViewLoginLogs}
-          style={{
-            borderRadius: "10px",
-            marginLeft: "10px",
-            marginTop: "10px",
-          }}
-        />
-      </div>
+            <Button
+              label="Click To View Login Logs"
+              icon="pi pi-arrow-up-right"
+              iconPos="right"
+              rounded
+              outlined
+              aria-label="Filter"
+              onClick={navigateToViewLoginLogs}
+              style={{
+                borderRadius: "10px",
+                marginLeft: "10px",
+                marginTop: "10px",
+              }}
+            />
+          </div>
 
-      <div className="d-flex justify-content-between align-items-center gap-3 mb-3 ">
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Most Liked Story</p>
-            <h4 className="mb-0 sub-title">{mostLikedData.likes_count}</h4>
-          </div>
-          <div className="d-flex flex-column align-items-end">
-            <h6 className="red">
-              <AiTwotoneLike style={{ fontSize: "30px" }} />
-            </h6>
-            <p className="mb-0  desc">{mostLikedData.heading}</p>
-          </div>
-        </div>
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Most Viewed Story</p>
-            <h4 className="mb-0 sub-title">{mostViewedData.views_count}</h4>
-          </div>
-          <div className="d-flex flex-column align-items-end">
-            <h6 className="red">
-              <FcReading style={{ fontSize: "30px" }} />
-            </h6>
-            <p className="mb-0  desc">{mostViewedData.heading}</p>
-          </div>
-        </div>
-        <div>
-          {/* <div>
+          <div className="d-flex justify-content-between align-items-center gap-3 mb-3 ">
+            <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+              <div>
+                <p className="desc">Most Liked Story</p>
+                <h4 className="mb-0 sub-title">{mostLikedData.likes_count}</h4>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <h6 className="red">
+                  <AiTwotoneLike style={{ fontSize: "30px" }} />
+                </h6>
+                <p className="mb-0  desc">{mostLikedData.heading}</p>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+              <div>
+                <p className="desc">Most Viewed Story</p>
+                <h4 className="mb-0 sub-title">{mostViewedData.views_count}</h4>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <h6 className="red">
+                  <FcReading style={{ fontSize: "30px" }} />
+                </h6>
+                <p className="mb-0  desc">{mostViewedData.heading}</p>
+              </div>
+            </div>
+            <div>
+              {/* <div>
             <Button
               label="Click To View Login Logs"
               icon="pi pi-arrow-up-right"
@@ -235,37 +253,40 @@ const Dashboard = () => {
 
           
           </div> */}
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Total Users</p>
-            <h4 className="mb-0 sub-title">{customerData}</h4>
+          <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+              <div>
+                <p className="desc">Total Users</p>
+                <h4 className="mb-0 sub-title">{customerData}</h4>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+              <div>
+                <p className="desc">Total Stories</p>
+                <h4 className="mb-0 sub-title">{blogData}</h4>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+              <div>
+                <p className="desc">Total Categories</p>
+                <h4 className="mb-0 sub-title">{categoryData}</h4>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Total Stories</p>
-            <h4 className="mb-0 sub-title">{blogData}</h4>
-          </div>
-        </div>
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Total Categories</p>
-            <h4 className="mb-0 sub-title">{categoryData}</h4>
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-4">
-        <h3 className="mb-5 title">User Registration Statistics by Month</h3>
-        <div>
-          <Column {...config} />
-        </div>
-      </div>
-      
+          <div className="mt-4">
+            <h3 className="mb-5 title">
+              User Registration Statistics by Month
+            </h3>
+            <div>
+              <Column {...config} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

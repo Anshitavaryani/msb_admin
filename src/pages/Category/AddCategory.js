@@ -15,7 +15,7 @@ const AddCategory = () => {
   const [title, setTitle] = useState("");
   const [images, setImages] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [disable, setDisable] = useState(false)
+  const [disable, setDisable] = useState(false);
   const navigate = useNavigate();
 
   // const handleImageChange = (e) => {
@@ -37,15 +37,15 @@ const AddCategory = () => {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-  
+
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/jpg"]; // Add more allowed types if needed
-  
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"]; // Add more allowed types if needed
+
       if (!allowedTypes.includes(file.type)) {
-        console.error("Error: Invalid file type. Images (JPEG, JPG) only!");
+        console.error("Error: Invalid file type. Images (JPEG, JPG,PNG) only!");
         return;
       }
-  
+
       if (file.size <= 1024 * 1024) {
         // If image size is less than or equal to 1 MB, no need to compress
         setImages(file);
@@ -61,7 +61,7 @@ const AddCategory = () => {
             maxSizeMB: 1,
             maxWidthOrHeight: 1920,
           });
-  
+
           // Check if compression actually reduced the size
           if (compressedFile.size < file.size) {
             const reader = new FileReader();
@@ -88,14 +88,16 @@ const AddCategory = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setDisable(true)
+    setDisable(true);
 
     if (!title) {
       toast.error("Please enter name");
+      setDisable(false);
       return;
     }
     if (!images) {
       toast.error("Please enter Image");
+      setDisable(false);
       return;
     }
 
@@ -110,7 +112,7 @@ const AddCategory = () => {
         toast.success("Category added successfully");
         navigate("/category");
       }
-      setDisable(false)
+      setDisable(false);
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -136,7 +138,7 @@ const AddCategory = () => {
       } else {
         toast.error("Network error");
       }
-      setDisable(false)
+      setDisable(false);
     }
   };
 
@@ -227,7 +229,7 @@ const AddCategory = () => {
                   // width:"10px"
                 }}
               >
-                {disable? "Saving...." : "Save"}
+                {disable ? "Saving...." : "Save"}
               </Button>
 
               <Button

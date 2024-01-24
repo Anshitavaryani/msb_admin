@@ -15,6 +15,8 @@ const AdminUser = () => {
   const [anchorEl, setAnchorEl] = React.useState();
   const [userId, setUserId] = useState();
   const [userIdToNavigate, setUserIdToNavigate] = useState();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleClick = (event, value) => {
     setUserIdToNavigate(value);
@@ -24,10 +26,18 @@ const AdminUser = () => {
   //get all specialist
   const getData = async () => {
     try {
+      setLoading(true);
       let result = await GetAdmins(localStorage.getItem("adminToken"));
       setRoleData(result.data.data);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("You do not have access to this page as a sub-admin.");
+      } else {
+        setErrorMessage("Error loading data. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -108,7 +118,7 @@ const AdminUser = () => {
     {
       field: "name",
       headerName: "Name",
-      width: 350,
+      width: 250,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
       flex: 1,
@@ -119,7 +129,7 @@ const AdminUser = () => {
       width: 350,
       headerClassName: "custom-header",
       cellClassName: "custom-cell",
-      flex: 1,
+      // flex: 1,
     },
     {
       field: "role",
@@ -164,43 +174,59 @@ const AdminUser = () => {
 
   return (
     <Box m="20px">
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h3>Admin List</h3>
-        <Box>
-          <Button
-            label=" Add New Admin"
-            icon="pi pi-plus"
-            severity="success"
-            onClick={navigateToAddAdmin}
-            style={{ margin: "0px 10px" }}
-          />
-        </Box>
-      </Box>
-      <div
-        style={{
-          height: dataGridHeight,
-          width: "100%",
-          // marginLeft: "10%",
-          marginTop: "20px",
-        }}
-      >
-        <DataGrid
-          rows={roleData}
-          columns={columns}
-          pageSize={pageSize}
-          rowHeight={80}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[50, 75, 100]}
-          experimentalFeatures={{ newEditingApi: true }}
-          onSelectionModelChange={(id) => {
-            const selectedIDs = new Set([id]);
-            const selectedRowData = roleData.filter((row) =>
-              selectedIDs.has(row.id.toString())
-            );
-            setUserId(selectedIDs);
-          }}
-        />
-      </div>
+      {loading && <p style={{ fontSize: "16px" }}>Loading...</p>}
+      {errorMessage && (
+        <p style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}>
+          {errorMessage}
+        </p>
+      )}
+
+      {!loading && !errorMessage && (
+        <>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <h3>Admin List</h3>
+            <Box>
+              <Button
+                label=" Add New Admin"
+                icon="pi pi-plus"
+                severity="success"
+                onClick={navigateToAddAdmin}
+                style={{ margin: "0px 10px" }}
+              />
+            </Box>
+          </Box>
+          <div
+            style={{
+              height: dataGridHeight,
+              width: "100%",
+              // marginLeft: "10%",
+              marginTop: "20px",
+            }}
+          >
+            <DataGrid
+              rows={roleData}
+              columns={columns}
+              pageSize={pageSize}
+              rowHeight={80}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[50, 75, 100]}
+              experimentalFeatures={{ newEditingApi: true }}
+              onSelectionModelChange={(id) => {
+                const selectedIDs = new Set([id]);
+                const selectedRowData = roleData.filter((row) =>
+                  selectedIDs.has(row.id.toString())
+                );
+                setUserId(selectedIDs);
+                console.log("selectedRowData", selectedRowData);
+              }}
+            />
+          </div>
+        </>
+      )}
     </Box>
   );
 };

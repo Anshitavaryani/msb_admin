@@ -92,6 +92,7 @@ const Categorylist = () => {
         progress: undefined,
         theme: "light",
       });
+      window.location.reload(true);
       setTimeout(() => {
         navigate("/category");
       }, 3000);

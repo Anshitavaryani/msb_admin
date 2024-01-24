@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../Host";
+import requestWithToken from "./Config";
 
 //admin login
 export const AdminLogin = async (data) => {
@@ -13,9 +14,7 @@ export const AdminLogin = async (data) => {
 
 //get all user
 export const GetUsers = async () => {
-  const res = await axios.get(BASE_URL + "admin/getAllUsers");
-
-  return res;
+  return await requestWithToken(BASE_URL + "admin/getAllUsers", "GET");
 };
 
 //get userby id
@@ -217,8 +216,7 @@ export const ChangeAdminPassword = async (data) => {
 };
 
 export const GetAdmins = async () => {
-  const res = await axios.get(BASE_URL + "admin/getAllAdmin");
-  return res;
+  return await requestWithToken(BASE_URL + "admin/getAllAdmin", "GET");
 };
 
 export const GetAdminById = async (id) => {
@@ -275,8 +273,7 @@ export const ChangePaymentStatus = async ({ user_id, payment_status }) => {
 };
 
 export const GetUserCount = async () => {
-  const res = await axios.get(BASE_URL + "admin/getUserCount");
-  return res;
+  return await requestWithToken(BASE_URL + "admin/getUserCount", "GET");
 };
 
 export const GetBlogCount = async () => {
@@ -359,7 +356,6 @@ export const DeleteSocialLogin = async (content_id, adminToken) => {
 
 //*************************************************Section content api******************************************************** */
 
-
 export const GetAllSectionContent = async () => {
   const res = await axios.get(BASE_URL + "content/getAllSectionContent");
   return res;
@@ -399,10 +395,7 @@ export const DeleteSectionContent = async (content_id, adminToken) => {
   });
 };
 
-
 //*************************************************Banner content api******************************************************** */
-
-
 
 export const GetAllBannerContent = async () => {
   const res = await axios.get(BASE_URL + "content/getAllBannerContent");
@@ -444,7 +437,6 @@ export const DeleteBannerContent = async (content_id, adminToken) => {
 };
 
 //*************************************************Card content api******************************************************** */
-
 
 export const GetAllCardContent = async () => {
   const res = await axios.get(BASE_URL + "content/getAllCardContent");
@@ -488,5 +480,3 @@ export const DeleteCardContent = async (content_id, adminToken) => {
     },
   });
 };
-
-

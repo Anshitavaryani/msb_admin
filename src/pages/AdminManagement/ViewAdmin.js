@@ -24,7 +24,7 @@ const ViewAdmin = () => {
 
   const navigate = useNavigate();
   const navigateToAdmin = () => {
-    navigate("/adminList");
+    navigate("/");
   };
   return (
     <Box m="20px">
@@ -40,6 +40,7 @@ const ViewAdmin = () => {
                 type="text"
                 defaultValue={idData?.name}
                 name="name"
+                disabled
               />
             </Form.Group>
 
@@ -49,6 +50,7 @@ const ViewAdmin = () => {
                 type="text"
                 defaultValue={idData?.email_id}
                 name="abbreviation"
+                disabled
               />
             </Form.Group>
 
@@ -59,6 +61,7 @@ const ViewAdmin = () => {
                 type="text"
                 defaultValue={idData?.admin_roles?.name || ''}
                 name="abbreviation"
+                disabled
               />
             </Form.Group>
 
@@ -72,7 +75,7 @@ const ViewAdmin = () => {
               }}
               style={{ borderRadius: "10px", marginLeft: "10px" }}
             >
-              Return to Admin List
+              Return to  Dashboard
             </Button>
           </div>
         </div>

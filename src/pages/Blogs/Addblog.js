@@ -27,10 +27,10 @@ const Addblog = () => {
     const file = e.target.files[0];
   
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/jpg"]; // Add more allowed types if needed
+      const allowedTypes = ["image/jpeg", "image/jpg","image/png"]; // Add more allowed types if needed
   
       if (!allowedTypes.includes(file.type)) {
-        console.error("Error: Invalid file type. Images (JPEG, JPG) only!");
+        console.error("Error: Invalid file type. Images (JPEG, JPG,PNG) only!");
         return;
       }
   
@@ -138,14 +138,17 @@ const Addblog = () => {
 
     if (!heading) {
       toast.error("Please enter heading");
+      setDisable(false);
       return;
     }
     if (!description) {
       toast.error("Please enter description");
+      setDisable(false);
       return;
     }
     if (!type) {
       toast.error("Please enter type");
+      setDisable(false);
       return;
     }
     try {

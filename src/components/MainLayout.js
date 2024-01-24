@@ -1,13 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { AiOutlineDashboard, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineDashboard } from "react-icons/ai";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { FaUsers, FaRegSun, FaUser } from "react-icons/fa";
-import { ImBlog } from "react-icons/im";
-import { FaBloggerB } from "react-icons/fa";
 import { MdOutlineCategory } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
 import { MdAutoStories } from "react-icons/md";
@@ -19,8 +17,8 @@ import { PiChatsBold } from "react-icons/pi";
 import { toast } from "react-toastify";
 import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
+import { FaUserGear } from "react-icons/fa6";
 import "./MainLayout.scss";
-import { Toast } from "primereact/toast";
 import Login from "../pages/Login";
 const { Header, Sider, Content } = Layout;
 
@@ -30,7 +28,7 @@ const MainLayout = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate();
-  const ref = useRef(null);
+
 
   // const notify = () =>{ }
   function logout() {
@@ -139,10 +137,16 @@ const MainLayout = () => {
                   ],
                 },
                 {
-                  key: "role-list",
-                  icon: <FaRegSun className="fs-4" />,
-                  label: "Role ",
+                  key: "/adminList",
+                  icon: <FaUserGear className="fs-4" />,
+                  label: "Admin Management",
+                
                 },
+                // {
+                //   key: "role-list",
+                //   icon: <FaRegSun className="fs-4" />,
+                //   label: "Role ",
+                // },
               ]}
             />
           </Sider>
@@ -196,15 +200,7 @@ const MainLayout = () => {
                         View Profile
                       </Link>
                     </li>
-                    <li>
-                      <Link
-                        className="dropdown-item py-1 mb-1"
-                        style={{ height: "auto", lineHeight: "20px" }}
-                        to="/adminList"
-                      >
-                        Add Another Admin Account
-                      </Link>
-                    </li>
+                  
                     <li>
                       <Link
                         className="dropdown-item py-1 mb-1"
